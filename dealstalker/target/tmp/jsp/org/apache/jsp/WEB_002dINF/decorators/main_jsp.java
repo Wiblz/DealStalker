@@ -109,7 +109,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("<body id=\"page-home\">\n");
       out.write("    <div id=\"page\">\n");
       out.write("        <div id=\"header\" class=\"clearfix\">\n");
-      out.write("        \tHEADER\n");
+      out.write("        \tDeal Stalker\n");
       out.write("            <hr />\n");
       out.write("        </div>\n");
       out.write("        \n");
@@ -158,7 +158,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("        </div>\n");
       out.write("        \n");
       out.write("        <div id=\"footer\" class=\"clearfix\">\n");
-      out.write("            Footer\n");
+      out.write("            dealstalkerstaff@gmail.com\n");
       out.write("        </div>\n");
       out.write("        \n");
       out.write("    </div>\n");

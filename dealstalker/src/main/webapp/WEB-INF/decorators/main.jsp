@@ -29,7 +29,7 @@
 <body id="page-home">
     <div id="page">
         <div id="header" class="clearfix">
-        	HEADER
+        	Deal Stalker
             <hr />
         </div>
         
@@ -75,7 +75,7 @@
         </div>
         
         <div id="footer" class="clearfix">
-            Footer
+            dealstalkerstaff@gmail.com
         </div>
         
     </div>
