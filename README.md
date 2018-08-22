@@ -1,4 +1,4 @@
-# Deal Finder
+# Deal Stalker
 
 ### To run the server from the terminal
 * Use ```mvn jetty:run``` from dealstalker dir 
