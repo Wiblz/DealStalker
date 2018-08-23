@@ -6,6 +6,10 @@ public class Customer {
     private String email = "";
     private int age = -1;
     private String password = "";
+    
+    
+    private Boolean invalidData = false;
+    private String errorText = "";
 
     public String getFirstName() {
         return firstName;
@@ -24,11 +28,13 @@ public class Customer {
     }
 
     public String getEmail() {
+    	
         return email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if(email.indexOf("@") != -1)
+        	this.email = email;
     }
 
     public int getAge() {

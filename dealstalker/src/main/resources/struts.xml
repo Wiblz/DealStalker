@@ -19,6 +19,19 @@
             <result name="input">/jsp/index.jsp</result>
             <result>/WEB-INF/jsp/helloWorld.jsp</result>
         </action>
+        
+        <action name="startRegister" class="org.dealstalker.com.StartRegister" method="execute">
+ 			<result name="success">/WEB-INF/jsp/register.jsp</result>
+        </action>
+        
+        <action name="register" class="org.dealstalker.com.Register" method="execute">
+ 			<result name="success">/WEB-INF/jsp/thankyou.jsp</result>
+        </action>
+        
+        <action name="startSignin" class="org.dealstalker.com.StartSignin" method="execute">
+            <result name="success">/WEB-INF/jsp/signin.jsp</result>
+        </action>
+        
 
     </package>
 

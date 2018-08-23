@@ -10,11 +10,11 @@
 	<s:head />
 </head>
 <body>
-	<s:form action="helloWorld">
-		<s:textfield label="What is your name?" name="name" />
-		<s:textfield label="What is the date?" name="dateNow" />
-		<s:submit />
-	</s:form>
+	<div>
+		 <div><p><a href="<s:url action="startRegister" />"> Sign up</a>.</p></div>
+		 <div><p><a href="<s:url action="startSignin" />"> Sign in</a>.</p></div>
+    </div>
+
 </body>
 </html>
 	
