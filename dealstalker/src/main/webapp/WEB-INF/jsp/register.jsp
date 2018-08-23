@@ -15,6 +15,7 @@
       <s:textfield name="customerBean.email"  label ="Email"/>  
       <s:textfield name="customerBean.age"  label="Age"  />
       <s:textfield name="customerBean.password"  label="Password"  /> 
+      <s:textfield name="customerBean.reapetedPassword"  label="Repeat Password"  /> 
       <s:submit/>
     </s:form>	
   </body>

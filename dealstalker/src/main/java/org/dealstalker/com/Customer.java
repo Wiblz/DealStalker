@@ -6,10 +6,7 @@ public class Customer {
     private String email = "";
     private int age = -1;
     private String password = "";
-    
-    
-    private Boolean invalidData = false;
-    private String errorText = "";
+    private String repeatedPassword = "";
 
     public String getFirstName() {
         return firstName;
@@ -33,7 +30,6 @@ public class Customer {
     }
 
     public void setEmail(String email) {
-        if(email.indexOf("@") != -1)
         	this.email = email;
     }
 
@@ -46,6 +42,14 @@ public class Customer {
     }
 	
 
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
+    }
+    
     public String getPassword() {
         return password;
     }
@@ -55,8 +59,8 @@ public class Customer {
     }
 
     public String toString() {
-        return "First Name: " + getFirstName() + "/n" + " Last Name:  " + getLastName() + "/n" +
-        " Email:      " + getEmail() + "/n" + " Age:      " + getAge() ;
+        return "First Name: " + getFirstName() + "\n" + " Last Name:  " + getLastName() + "\n" +
+        " Email:      " + getEmail() + "\n" + " Age:      " + getAge() ;
     }
 
 }
