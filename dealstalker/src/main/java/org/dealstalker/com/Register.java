@@ -37,7 +37,7 @@ public class Register extends ActionSupport {
 	        addFieldError("personBean.age", "Age is required and must be 18 or older");
 	    }
 	    
-	    if (customerBean.getPassword().equals(customerBean.getRepeatedPassword())) {
+	    if (!customerBean.getPassword().equals(customerBean.getRepeatedPassword())) {
 	        addFieldError("personBean.repeatedPassword", "Password should be identical");
 	    }
 	}

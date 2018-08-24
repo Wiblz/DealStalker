@@ -14,11 +14,6 @@
         <action name="index" class="org.dealstalker.com.IndexAction">
             <result>/WEB-INF/jsp/index.jsp</result>
         </action>
-
-        <action name="helloWorld" class="org.dealstalker.com.HelloWorldAction">
-            <result name="input">/jsp/index.jsp</result>
-            <result>/WEB-INF/jsp/helloWorld.jsp</result>
-        </action>
         
         <action name="startRegister" class="org.dealstalker.com.StartRegister" method="execute">
  			<result name="success">/WEB-INF/jsp/register.jsp</result>

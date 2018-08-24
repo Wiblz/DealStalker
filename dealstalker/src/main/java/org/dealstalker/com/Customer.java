@@ -4,7 +4,7 @@ public class Customer {
     private String firstName = "";
     private String lastName = "";
     private String email = "";
-    private int age = -1;
+    private int age;
     private String password = "";
     private String repeatedPassword = "";
 
@@ -25,7 +25,6 @@ public class Customer {
     }
 
     public String getEmail() {
-    	
         return email;
     }
 
