@@ -1,3 +1,4 @@
+import datetime
 from urllib.parse import urlparse
 
 import scrapy
@@ -25,27 +26,37 @@ class SJSSpider(scrapy.spiders.CrawlSpider):
     def parse_item(self, response):
         item_loader = ItemLoader(item=ScraperItem(), response=response)
 
-        # Get product brand
         item_loader.add_xpath('brand', '//*[@id="columns"]/div[1]/span[2]/span[9]/a/span/text()')
 
-        item_loader.add_xpath('price', '//*[@id="our_price_display"]/text()',
-                              MapCompose(lambda i: i[2:]))
+        # Here and further we use [0] to get an actual string from list containing single string
+        # Unfortunately, this is how xpath() works
+        price = response.xpath('//*[@id="our_price_display"]/text()').extract()[0]
+        item_loader.add_value('price', price,
+                              MapCompose(lambda i: i[2:].replace(',', '.'), float))
 
         item_loader.add_xpath('price_currency', '(//*[@itemprop="priceCurrency"])[1]/@content')
 
-        model = response.xpath('//*[@id="columns"]/div[1]/span[2]/text()').extract()
+        model = response.xpath('//*[@id="columns"]/div[1]/span[2]/text()').extract()[0]
 
         item_loader.add_value('model', model)
 
-        available_sizes = response.xpath('//*[contains(@class, "attribute_select")]/option/text()').extract()
-        del available_sizes[0]
+        available_sizes = response.xpath('(//*[contains(@class, "attribute_select")]/option)[.!="Select Size"]/text()').extract()
 
         item_loader.add_value('available_sizes', available_sizes)
 
-        full_product_name = response.xpath('(//*[@class="h4"])[1]/text()').extract()
+        full_product_name = response.xpath('//*[@class="h4"]/text()').extract()[0]
         item_loader.add_value('color', full_product_name.replace(model, ''), MapCompose(str.strip))
 
-        is_discounted = len(response.xpath('//*[contains(@class, "price_reduced")]').extract()) == 0
+        image_src = response.xpath('(//*[@itemprop="image"])[1]/@src').extract()[0]
+        item_loader.add_value('image', image_src)
+
+        description = response.xpath('//*[@id="prod-desc"]/div/p/text()').extract()[0]
+        item_loader.add_value('description', description)
+
+        is_discounted = len(response.xpath('//*[contains(@class, "price_reduced")]').extract()) != 0
         item_loader.add_value('is_discounted', is_discounted)
+
+        item_loader.add_value('url', response.url)
+        item_loader.add_value('date', str(datetime.datetime.now()))
 
         return item_loader.load_item()
