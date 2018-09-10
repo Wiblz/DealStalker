@@ -22,16 +22,16 @@ class QuotesSpider(scrapy.Spider):
             next_product = response.urljoin(next_product)
             yield scrapy.Request(next_product, callback=self.parseProductAsos)
          
-        next_page = response.css("a._2HG66Ah::attr(href)")[0].extract()
+        next_page = response.css("a._2HG66Ah::attr(href)").extract_first()
         if next_page is not None:
             next_page = response.urljoin(next_page)
             yield scrapy.Request(next_page, callback=self.parse)
 
     
     #parsing product entries logic
-    def parseProductAsos(self,response):
+    def parseProductAsos(self, response):
         #open('testfile', 'w').close()
-        file = open("testfile","a+")
+        file = open("testfile", "a+")
         for product in response.css("div.product-hero h1"):
             yield {
             'text': product.extract()
