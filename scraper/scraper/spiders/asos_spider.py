@@ -1,7 +1,7 @@
 import scrapy
 
-class QuotesSpider(scrapy.Spider):
-    name = "product"
+class AsosSpider(scrapy.Spider):
+    name = "asos"
 
     #starting request point
     def start_requests(self):
@@ -14,13 +14,10 @@ class QuotesSpider(scrapy.Spider):
     def parse(self, response):
     #logic is only for ASOS pages
         for quote in response.css("article._2oHs74P a::attr(href)"):
-            yield {
-                'text': quote.extract()
-            }
-        next_product = quote.extract()
-        if next_product is not None:
-            next_product = response.urljoin(next_product)
-            yield scrapy.Request(next_product, callback=self.parseProductAsos)
+            next_product = quote.extract()
+            if next_product is not None:
+                next_product = response.urljoin(next_product)
+                yield scrapy.Request(next_product, callback=self.parseProductAsos)
          
         next_page = response.css("a._2HG66Ah::attr(href)").extract_first()
         if next_page is not None:
@@ -33,9 +30,6 @@ class QuotesSpider(scrapy.Spider):
         #open('testfile', 'w').close()
         file = open("testfile", "a+")
         for product in response.css("div.product-hero h1"):
-            yield {
-            'text': product.extract()
-            }
             self.log(product.extract())
             file.write(product.extract())
             file.write("\n")
