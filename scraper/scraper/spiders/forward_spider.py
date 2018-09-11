@@ -1,5 +1,8 @@
+import datetime
+
 import scrapy
 from scrapy.loader import ItemLoader
+from scrapy.loader.processors import MapCompose
 
 from scraper.items import ScraperItem
 
@@ -10,41 +13,78 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
 
     def __init__(self):
         super().__init__()
-        self.current_page = None
         self.pages_available = None
         self.current_url_base = None
-        self.__pages_parsed = 0
-        self.__items_parsed = 0
 
     def start_requests(self):
         urls = ['https://www.fwrd.com/mens-category-clothing/15d48b/?navsrc=main']
         for url in urls:
             self.current_url_base = url
-            self.current_page = 1
-            yield scrapy.Request(url=url, callback=self.parse)
-
-    # def parse(self, response):
-    #     with open('fwrd_index_true_form.txt', 'a') as the_file:
-    #         the_file.write(response.body.decode(response.encoding))
+            yield scrapy.Request(url=url, callback=self.parse, meta={
+                'page_number': 1
+            }, cookies={
+                'pageSize': 500,
+                'currency': 'USD',
+                'currencyOverride': 'USD'
+            })
 
     def parse(self, response):
-        self.pages_available = int(
-            response.xpath('(//*[contains(@class, "pagination__link")])[last()]/text()').extract_first())
+        if response.meta['page_number'] == 1:
+            self.pages_available = int(response.xpath('(//*[contains(@class, "pagination__link")])[last()]/text()').extract_first())
 
-        self.parse_page(response)
-
-        for self.current_page in range(2, self.pages_available + 1):
-            yield scrapy.Request(self.current_url_base + "&pageNum=" + str(self.current_page), callback=self.parse_page,
-                                 dont_filter=True)
-
-    def parse_page(self, response):
         items = response.xpath('//*[contains(@class, "products-grid__item")]/a[1]/@href').extract()
         for item in items:
             if item is not None:
                 item_url = response.urljoin(item)
             yield scrapy.Request(item_url, callback=self.parse_item)
 
+        next_page = response.meta['page_number'] + 1
+        if next_page <= self.pages_available:
+            yield scrapy.Request(self.current_url_base + "&pageNum=" + str(next_page), callback=self.parse,
+                                 dont_filter=True, meta={'page_number': next_page})
+
     def parse_item(self, response):
+        # Check if this item is still in stock
+        if response.xpath('//*[@id="sold-out-div"]').extract_first():
+            print(response.url, "\nIS SOLD OUT!")
+            return
+
         item_loader = ItemLoader(item=ScraperItem(), response=response)
+
+        item_loader.add_xpath('brand', '(//*[@class="u-color--black"])[1]/text()', MapCompose(str.strip))
+
+        price = response.xpath('//*[@id="tr-pdp-price--sale"]/span[1]/text()').extract_first()
+        if price:
+            item_loader.add_value('is_discounted', True)
+        else:
+            item_loader.add_value('is_discounted', False)
+            price = response.xpath('//*[@id="tr-pdp-price"]/span[1]/text()').extract_first()
+        # removing 'US$' at the beginning of price string and casting to float
+        item_loader.add_value('price', price,
+                              MapCompose(lambda i: i[3:].replace(',', ''), float))
+
+        # Supposedly currency of all 'forward' items will be in dollars as we asked so in cookies
+        item_loader.add_value('price_currency', 'USD')
+
+        model = response.xpath('//*[@class="product_name"]/text()').extract_first()
+        item_loader.add_value('model', model)
+
+        # Should we add last in stock info here as well?
+        available_sizes = response.xpath('(//*[@id="size-select"]/option)[.!="Select Size"]/text()').extract()
+        if not available_sizes:
+            available_sizes = ['One Size']
+        item_loader.add_value('available_sizes', filter(lambda size: not size.endswith("(Sold Out)"),
+                                                        map(str.strip, available_sizes)))
+
+        color = response.xpath('//*[@id="color-select"]/option[1]/text()').extract_first()
+        if not color:
+            color = response.xpath('//*[contains(@class, "color_dd")]/div[1]/text()').extract_first()
+        item_loader.add_value('color', color, MapCompose(str.strip))
+
+        image_src = response.xpath('//*[@class="product-detail-image"]/@src').extract_first()
+        item_loader.add_value('image', image_src)
+
+        item_loader.add_value('url', response.url)
+        item_loader.add_value('date', str(datetime.datetime.now()))
 
         return item_loader.load_item()
