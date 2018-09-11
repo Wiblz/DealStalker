@@ -16,19 +16,43 @@
 package org.dealstalker.com;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import java.awt.List;
+import java.util.ArrayList;
 import java.util.Date;
 import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
+
 
 /**
  * 
  */
 @Conversion()
 public class IndexAction extends ActionSupport {
-    
+	
+	
+	ArrayList<Product> productList = new ArrayList<Product>();
+	Integer currentPage = 0;
+	Integer productPerPage = 50;
+	
     public String execute() throws Exception {
         
-        
+    	
         return SUCCESS;
     }
+    
+    
+    
+    public ArrayList<Product> getProductList() {
+    	return (productList.size() == 0) ? productList : 
+    		(ArrayList<Product>) productList.subList(currentPage*50, 
+    			((currentPage + 1) * 50 < productList.size()) ? 
+    					(currentPage+1) * 50 : productList.size() - 1);
+    }
+    
+    public void setProductList(ArrayList<Product> productList) {
+    	this.productList = productList;
+    }
+    
+    
 }
