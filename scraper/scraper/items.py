@@ -5,8 +5,6 @@ import scrapy
 
 class ScraperItem(scrapy.Item):
     brand = scrapy.Field()
-    primary_category = scrapy.Field()
-    secondary_category = scrapy.Field()
     price = scrapy.Field()
     price_currency = scrapy.Field()
     model = scrapy.Field()
@@ -16,5 +14,6 @@ class ScraperItem(scrapy.Item):
     description = scrapy.Field()
     is_discounted = scrapy.Field()
 
+    resource = scrapy.Field()
     url = scrapy.Field()
     date = scrapy.Field()

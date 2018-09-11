@@ -1,7 +1,8 @@
-import js2xml as js2xml
+import datetime
+import json
+
 import scrapy
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import MapCompose
 
 from scraper.items import ScraperItem
 
@@ -16,6 +17,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         self.current_url_base = None
 
     def start_requests(self):
+        # TODO: add every single category here and test how the loop works
         urls = ['https://www.farfetch.com/shopping/men/clothing-2/items.aspx']
         for url in urls:
             self.current_url_base = url
@@ -33,35 +35,46 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         if response.meta['page_number'] == 1:
             self.pages_available = int(response.xpath('//*[@data-tstid="paginationTotal"]/text()').extract_first())
 
-        items = response.xpath('//*[@data-tstid="Div_ListingProduct"]/a[1]/@href').extract()
+        items = response.xpath('//*[@data-product-id]/@data-product-id').extract()
         for item in items:
-            if item is not None:
-                item_url = response.urljoin(item)
-                yield scrapy.Request(item_url, callback=self.parse_item, meta={'retries':0})
+            yield scrapy.Request('https://www.farfetch.com/pdpslice/product/GetInfoByIds?ids=' + item +
+                                 '&mainProductId=' + item + '&isMoreLikeThis=false', callback=self.parse_item_json)
 
+        # TODO: test paging scheme on different categories
         next_page = response.meta['page_number'] + 1
         if next_page <= self.pages_available:
             yield scrapy.Request(self.current_url_base + "?page=" + str(next_page), callback=self.parse,
                                  dont_filter=True, meta={'page_number': next_page})
 
-    def parse_item(self, response):
+    def parse_item_json(self, response):
+        item_properties = json.loads(response.body)[0]
+
         item_loader = ItemLoader(item=ScraperItem(), response=response)
 
-        script = response.xpath('//*/script[6]/text()').extract_first()
-        jstree = js2xml.parse(script)
-        item_properties = js2xml.jsonlike.getall(jstree)[0]
+        # TODO: cleanup strings where needed
+        # TODO: test how this code works with discounted, one-sized and out of stock items
+        # TODO: test how this code works with more "exotic" categories and products
+        # TODO: implement extracting of product category (both domain and DB specific)
+        # TODO: deal with possible item duplicates (perhaps by saving inner id's of products)
 
-        # try:
-        item_loader.add_value('brand', item_properties['designerName'])
-        item_loader.add_value('price', item_properties['unitPrice'])
-        item_loader.add_value('price_currency', item_properties['currency'])
-        item_loader.add_value('model', item_properties['name'])
-        item_loader.add_value('image', item_properties['imageUrl'])
-        item_loader.add_value('description', item_properties['description'])
+        item_loader.add_value('brand', item_properties['designerDetails']['name'])
+        item_loader.add_value('price', item_properties['priceInfo']['default']['finalPrice'])
+        item_loader.add_value('price_currency', item_properties['priceInfo']['default']['currencyCode'])
+        item_loader.add_value('model', item_properties['details']['shortDescription'])
+        item_loader.add_value('image', item_properties['images']['main'][0]['large'])
+        item_loader.add_value('description', item_properties['designerDetails']['description'])
+        item_loader.add_value('color', item_properties['designerDetails']['designerColour'])
+        item_loader.add_value('is_discounted', item_properties['priceInfo']['default']['isOnSale'])
+        available_sizes = []
+        if item_properties['sizes']['isOneSize']:
+            available_sizes.append('One Size')
+        else:
+            for size, value in item_properties['sizes']['available'].items():
+                # Should we add last in stock info here as well?
+                available_sizes.append(value['description'])
+        item_loader.add_value('available_sizes', item_properties['priceInfo']['default']['isOnSale'])
 
-        # price = response.xpath('//*[@property="og:price:amount"]/text()').extract_first()
-        # item_loader.add_value('price', price, MapCompose(str.strip, float))
-        #
-        # item_loader.add_xpath('price_currency', '(//*[@property="og:price:currency"])[1]/text()')
+        item_loader.add_value('url', 'https://www.farfetch.com' + item_properties['details']['link']['href'])
+        item_loader.add_value('date', str(datetime.datetime.now()))
 
         return item_loader.load_item()
