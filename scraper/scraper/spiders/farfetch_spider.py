@@ -47,7 +47,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
                                  dont_filter=True, meta={'page_number': next_page})
 
     def parse_item_json(self, response):
-        item_properties = json.loads(response.body)[0]
+        item_properties = json.loads(response.body.decode('utf-8'))[0]
 
         item_loader = ItemLoader(item=ScraperItem(), response=response)
 
