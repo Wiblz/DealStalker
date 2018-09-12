@@ -78,6 +78,12 @@
             <artifactId>dwr</artifactId>
             <version>1.1-beta-3</version>
         </dependency>
+        <dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>8.0.12</version>
+		</dependency>
+        
     </dependencies>
 
     <build>

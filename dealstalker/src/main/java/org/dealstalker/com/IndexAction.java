@@ -15,6 +15,7 @@
  */
 package org.dealstalker.com;
 
+
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.awt.List;
@@ -22,6 +23,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 
 /**
@@ -36,6 +43,45 @@ public class IndexAction extends ActionSupport {
 	Integer productPerPage = 50;
 	
     public String execute() throws Exception {
+        Connection cnx = DriverLoader.getConnection();
+        Statement stmt = null;
+        String query = "Select * from Products;";
+        
+        try {
+        	    stmt =  cnx.createStatement(
+        	                           ResultSet.TYPE_FORWARD_ONLY,
+        	                           ResultSet.CONCUR_READ_ONLY);
+        	    
+        	    ResultSet rs =  stmt.executeQuery(query);
+        	    Product tempProduct = null;
+                
+        	    while (rs.next()) {
+        	    	
+        	    	tempProduct = new Product();
+        	    	tempProduct.setId((rs.getInt("id")));
+        	    	tempProduct.setBrandName(rs.getString("Brend"));
+        	    	tempProduct.setPrimaryCategory((rs.getString("PrimaryCategory")));
+        	    	tempProduct.setSubCategory(rs.getString("SubCategory"));
+        	    	tempProduct.setModelName(rs.getString("ModelName"));
+        	    	tempProduct.setPrice(rs.getFloat("Price"));
+        	    	tempProduct.setPriceCurrency(rs.getString("PriceCurrency"));
+        	    	tempProduct.setDescription(rs.getString("Description"));
+        	    	tempProduct.setSource(rs.getString("SourceUrl"));
+        	    	tempProduct.setResource(rs.getString("ResourceUrl"));
+        	    	tempProduct.setIsDiscounted(rs.getInt("isDiscounted"));
+        	    	
+        	    	productList.add(tempProduct);
+                }
+        	 
+        	}
+        	catch(Exception ex) {
+        		System.out.println("Handle me please, I am Mysql exception");
+        	}
+        	finally {		
+        		  if (stmt != null) {  stmt.close(); }
+        		  cnx.close();
+        	}
+        
         
     	
         return SUCCESS;

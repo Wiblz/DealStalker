@@ -2,14 +2,18 @@ package org.dealstalker.com;
 
 public class Product {
 	private Integer id;
-	private String pathToImage;
+	private String imageUrl;
 	private String modelName;
 	private String brandName;
-	private String category;
-	private Float lowerstPrice;
-	private Float highestPrice;
+	private String primaryCategory;
+	private Float price;
 	private Integer popularity;
 	private String description;
+	private String subCategory;
+	private String priceCurrency;
+	private String source;
+	private String Resource;
+	private int isDiscounted;
 	
 	public Integer getId() {
 		return id;
@@ -18,10 +22,10 @@ public class Product {
 		this.id = id;
 	}
 	public String getPathToImage() {
-		return pathToImage;
+		return imageUrl;
 	}
 	public void setPathToImage(String pathToImage) {
-		this.pathToImage = pathToImage;
+		this.imageUrl = pathToImage;
 	}
 	public String getModelName() {
 		return modelName;
@@ -35,23 +39,18 @@ public class Product {
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
 	}
-	public String getCategory() {
-		return category;
+	public String getPrimaryCategory() {
+		return primaryCategory;
 	}
-	public void setCategory(String category) {
-		this.category = category;
+	public void setPrimaryCategory(String category) {
+		this.primaryCategory = category;
 	}
-	public Float getLowerstPrice() {
-		return lowerstPrice;
+	
+	public Float getPrice() {
+		return price;
 	}
-	public void setLowerstPrice(Float lowerstPrice) {
-		this.lowerstPrice = lowerstPrice;
-	}
-	public Float getHighestPrice() {
-		return highestPrice;
-	}
-	public void setHighestPrice(Float highestPrice) {
-		this.highestPrice = highestPrice;
+	public void setPrice(Float price) {
+		this.price = price;
 	}
 	public Integer getPopularity() {
 		return popularity;
@@ -64,5 +63,35 @@ public class Product {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getSubCategory() {
+		return subCategory;
+	}
+	public void setSubCategory(String subCategory) {
+		this.subCategory = subCategory;
+	}
+	public String getPriceCurrency() {
+		return priceCurrency;
+	}
+	public void setPriceCurrency(String priceCurrency) {
+		this.priceCurrency = priceCurrency;
+	}
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public String getResource() {
+		return Resource;
+	}
+	public void setResource(String resource) {
+		Resource = resource;
+	}
+	public int getIsDiscounted() {
+		return isDiscounted;
+	}
+	public void setIsDiscounted(int isDiscounted) {
+		this.isDiscounted = isDiscounted;
 	}	
 }
