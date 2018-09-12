@@ -21,11 +21,11 @@ public class Product {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getPathToImage() {
+	public String getImageUrl() {
 		return imageUrl;
 	}
-	public void setPathToImage(String pathToImage) {
-		this.imageUrl = pathToImage;
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 	public String getModelName() {
 		return modelName;
@@ -45,7 +45,6 @@ public class Product {
 	public void setPrimaryCategory(String category) {
 		this.primaryCategory = category;
 	}
-	
 	public Float getPrice() {
 		return price;
 	}

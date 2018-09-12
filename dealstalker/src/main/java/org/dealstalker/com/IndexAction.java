@@ -38,14 +38,16 @@ import java.sql.Statement;
 public class IndexAction extends ActionSupport {
 	
 	
-	ArrayList<Product> productList = new ArrayList<Product>();
-	Integer currentPage = 0;
-	Integer productPerPage = 50;
+	private ArrayList<Product> productList; 
+	public Integer currentPage = 0;
+	public Integer productPerPage = 50;
 	
     public String execute() throws Exception {
         Connection cnx = DriverLoader.getConnection();
         Statement stmt = null;
         String query = "Select * from Products;";
+        
+        productList = new ArrayList<Product>();
         
         try {
         	    stmt =  cnx.createStatement(
@@ -56,7 +58,6 @@ public class IndexAction extends ActionSupport {
         	    Product tempProduct = null;
                 
         	    while (rs.next()) {
-        	    	
         	    	tempProduct = new Product();
         	    	tempProduct.setId((rs.getInt("id")));
         	    	tempProduct.setBrandName(rs.getString("Brend"));
@@ -69,7 +70,7 @@ public class IndexAction extends ActionSupport {
         	    	tempProduct.setSource(rs.getString("SourceUrl"));
         	    	tempProduct.setResource(rs.getString("ResourceUrl"));
         	    	tempProduct.setIsDiscounted(rs.getInt("isDiscounted"));
-        	    	
+        	    	tempProduct.setImageUrl(rs.getString("ImageUrl"));
         	    	productList.add(tempProduct);
                 }
         	 
@@ -81,6 +82,16 @@ public class IndexAction extends ActionSupport {
         		  if (stmt != null) {  stmt.close(); }
         		  cnx.close();
         	}
+// May be used for debug
+        
+//        for(Product p :productList) {
+//        	System.out.println(p.getImageUrl());
+//        	System.out.println(p.getBrandName());
+//        	System.out.println(p.getDescription());
+//        	System.out.println(p.getModelName());
+//        	System.out.println(p.getResource());
+//        	System.out.println(p.getSource());
+//        }
         
         
     	
@@ -88,12 +99,16 @@ public class IndexAction extends ActionSupport {
     }
     
     
-    
-    public ArrayList<Product> getProductList() {
-    	return (productList.size() == 0) ? productList : 
-    		(ArrayList<Product>) productList.subList(currentPage*50, 
-    			((currentPage + 1) * 50 < productList.size()) ? 
-    					(currentPage+1) * 50 : productList.size() - 1);
+//    Does not work yet
+//    public ArrayList<Product> getProductList() {
+//    	return (productList.size() == 0) ? productList : 
+//    		(ArrayList<Product>) productList.subList(currentPage*50, 
+//    			((currentPage + 1) * 50 < productList.size()) ? 
+//    					(currentPage+1) * 50 : productList.size() - 1);
+//    }
+
+    public ArrayList<Product> getProductList(){
+    	return productList;
     }
     
     public void setProductList(ArrayList<Product> productList) {
