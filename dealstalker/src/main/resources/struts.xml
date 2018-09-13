@@ -28,6 +28,10 @@
             <result name="success">/WEB-INF/jsp/signin.jsp</result>
         </action>
         
+        <action name="searchItems" class="org.dealstalker.com.SearchEngine" method="execute">
+            <result name="success">/WEB-INF/jsp/searchResults.jsp</result>
+        </action>
+        
 
     </package>
 

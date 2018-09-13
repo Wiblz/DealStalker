@@ -9,7 +9,7 @@
 	<title>Hello World</title>
 	<s:head />
 </head>
-<body>
+<body style="background-color: #E5E5E5; text-align: center; padding-top: 100px; font-size: 25px;">
 	Hello <s:property value="name"/>, today is <s:property value="dateNow" /><br/>
 
 </body>
