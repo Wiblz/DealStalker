@@ -60,7 +60,7 @@ public class IndexAction extends ActionSupport {
         	    while (rs.next()) {
         	    	tempProduct = new Product();
         	    	tempProduct.setId((rs.getInt("id")));
-        	    	tempProduct.setBrandName(rs.getString("Brend"));
+        	    	tempProduct.setBrandName(rs.getString("Brand"));
         	    	tempProduct.setPrimaryCategory((rs.getString("PrimaryCategory")));
         	    	tempProduct.setSubCategory(rs.getString("SubCategory"));
         	    	tempProduct.setModelName(rs.getString("ModelName"));

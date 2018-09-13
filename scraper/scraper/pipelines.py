@@ -22,7 +22,7 @@ class ScraperPipeline(object):
     def process_item(self, item, spider):
 
         add_product = ("INSERT INTO Products "
-              "(Brend, ModelName, Description,Price, PriceCurrency,ImageUrl, SourceUrl,isDiscounted) "
+              "(Brand, ModelName, Description,Price, PriceCurrency,ImageUrl, SourceUrl,isDiscounted) "
               "VALUES (%s, %s, %s, %s ,%s, %s, %s, %s)" )
         
         self.cursor.execute(add_product, 

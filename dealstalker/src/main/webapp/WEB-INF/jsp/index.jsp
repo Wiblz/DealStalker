@@ -33,10 +33,13 @@
 			<div style="display: flex; flex-direction: row;">
 				<div style="width: 30%; margin-right: 30px;">
 		      		<p><s:property value="modelName"/></p>
-		        	<p><s:property value="imageUrl"/></p>
 		    	</div>
 		    	<div style="width: 200px; height: 200px;">
 		      		<img style="width: 100%; border: 2px solid #e5e5e5; border-radius: 10px;" src="<s:property value="imageUrl"/>" alt="image" > 
+		      	</div>
+		      	<div>
+		      		<p><s:property value="price"/></p>
+		      		<p><s:property value="priceCurrency"/></p>
 		      	</div>
 		 	</div>
 		</s:iterator>

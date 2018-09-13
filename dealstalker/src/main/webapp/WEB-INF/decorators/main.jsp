@@ -34,7 +34,7 @@
         </div>
         <div id="content" class="clearfix">
             <div id="main">
-            	<h3>Main Content</h3>
+            	<h3>Content</h3>
             	<decorator:body/>
                 <hr />
             </div>
