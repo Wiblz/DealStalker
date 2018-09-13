@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC
 	"-//W3C//DTD XHTML 1.1 Transitional//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -26,25 +26,24 @@
     </script>
     <decorator:head/>
 </head>
-<body id="page-home">
+<body id="page-home" style="background-image: url('../jsp/backgrounds/background.jpg'); text-align: center; padding-top: 50px;">
     <div id="page">
-        <div id="header" class="clearfix">
+        <div id="header" class="clearfix" style="text-align: center; font-size: 30px; font-weight: bold;">
         	Deal Stalker
-            <hr />
+        	<hr />
         </div>
         <div id="content" class="clearfix">
             <div id="main">
-            	<h3>Content</h3>
             	<decorator:body/>
-                <hr />
+              <hr />
             </div>
-        
-        <div id="footer" class="clearfix">
+
+        <div id="footer" class="clearfix" style="text-align: center; font-size: 20px; font-weight: bold;">
             dealstalkerstaff@gmail.com
         </div>
-        
+
     </div>
-    
+
     <div id="extra1">&nbsp;</div>
     <div id="extra2">&nbsp;</div>
 </body>
