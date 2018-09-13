@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
-  <body style="background-image: url(./backgrounds/background.jpg); text-align: center; padding-top: 50px;">
+  <body style="background-image: url('./backgrounds/background.jpg'); text-align: center; padding-top: 50px;">
     <div class="container">
       <div class="row">
         <h3>Register for monitoring stuff by completing this form.</h3>
@@ -21,7 +21,7 @@
           <s:textfield style="font-size: 18px; margin: 5px 5px; height: 20px; text-align: center;" name="customerBean.age"  label="Age"  />
           <s:textfield style="font-size: 18px; margin: 5px 5px; height: 20px; text-align: center;" name="customerBean.password"  label="Password"  />
           <s:textfield style="font-size: 18px; margin: 5px 5px; height: 20px; text-align: center;" name="customerBean.reapetedPassword"  label="Repeat Password"  />
-          <s:submit/>
+          <s:submit style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
         </s:form>
       </div>
     </div>

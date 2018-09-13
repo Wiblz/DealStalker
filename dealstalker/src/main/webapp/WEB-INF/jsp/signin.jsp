@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
-  <body style="background-image: url(./backgrounds/background.jpg); text-align: center;">
+  <body style="background-image: url('./backgrounds/background.jpg'); text-align: center;">
     <div class="container">
       <div class="row">
         <h3>Login Form</h3>
           <s:form action="signin" style="display: flex; flex-direction: column; width: 40%; margin: 0 auto;">
             <s:textfield style="font-size: 18px; margin: 5px 5px; height: 20px; text-align: center;" name="customerBean.email"  label ="Email"/>
             <s:textfield style="font-size: 18px; margin: 5px 5px; height: 20px; text-align: center;" name="customerBean.password"  label="Password" type="password"/>
-            <s:submit/>
+            <s:submit style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
           </s:form>
       </div>
     </div>

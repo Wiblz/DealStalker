@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<s:head />
 </head>
-<body style="background-image: url(./backgrounds/background.jpg); text-align: center; padding-top: 100px; font-size: 25px;">
+<body style="background-image: url('./backgrounds/background.jpg'); text-align: center; padding-top: 100px; font-size: 25px;">
 	<div class="container">
 		<div class="row">
 			<div style="text-align: center; width: 50%; margin: 200px auto; color: white; font-size: 20px; font-weight: bold;">
