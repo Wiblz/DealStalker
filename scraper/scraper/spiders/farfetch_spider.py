@@ -21,8 +21,17 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         self.category_resolver = FarfetchResolver()
 
     def start_requests(self):
-        # TODO: add every single category here and test how the loop works
-        urls = ['https://www.farfetch.com/shopping/men/clothing-2/items.aspx']
+        urls = [
+                'https://www.farfetch.com/shopping/men/clothing-2/items.aspx',
+                'https://www.farfetch.com/shopping/men/accessories-all-2/items.aspx',
+                'https://www.farfetch.com/shopping/men/shoes-2/items.aspx',
+                'https://www.farfetch.com/shopping/men/bags-purses-2/items.aspx',
+
+                'https://www.farfetch.com/shopping/women/clothing-1/items.aspx',
+                'https://www.farfetch.com/shopping/women/accessories-all-1/items.aspx',
+                'https://www.farfetch.com/shopping/women/shoes-1/items.aspx',
+                'https://www.farfetch.com/shopping/women/bags-purses-1/items.aspx'
+                ]
         for url in urls:
             self.current_url_base = url
             # Dodging annoying redirect using cookies and additional headers
