@@ -18,9 +18,11 @@ package org.dealstalker.com;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import java.awt.List;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
 
@@ -60,7 +62,7 @@ public class IndexAction extends ActionSupport {
         	    while (rs.next()) {
         	    	tempProduct = new Product();
         	    	tempProduct.setId((rs.getInt("id")));
-        	    	tempProduct.setBrandName(rs.getString("Brend"));
+        	    	tempProduct.setBrandName(rs.getString("Brand"));
         	    	tempProduct.setPrimaryCategory((rs.getString("PrimaryCategory")));
         	    	tempProduct.setSubCategory(rs.getString("SubCategory"));
         	    	tempProduct.setModelName(rs.getString("ModelName"));
@@ -99,17 +101,17 @@ public class IndexAction extends ActionSupport {
     }
     
     
-//    Does not work yet
-//    public ArrayList<Product> getProductList() {
-//    	return (productList.size() == 0) ? productList : 
-//    		(ArrayList<Product>) productList.subList(currentPage*50, 
-//    			((currentPage + 1) * 50 < productList.size()) ? 
-//    					(currentPage+1) * 50 : productList.size() - 1);
-//    }
-
-    public ArrayList<Product> getProductList(){
-    	return productList;
+    public List<Product> getProductList() {
+    	
+    	if(productList.size() == 0)
+    		return productList;
+    	
+    	return  
+    		 productList.subList(currentPage*50, 
+			 ((currentPage + 1) * 50 < productList.size()) ? 
+					(currentPage+1) * 50 : productList.size() - 1);
     }
+
     
     public void setProductList(ArrayList<Product> productList) {
     	this.productList = productList;

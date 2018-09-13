@@ -14,6 +14,25 @@ public class Product {
 	private String source;
 	private String Resource;
 	private int isDiscounted;
+	private Gender gender;
+	
+	
+	public enum Gender{
+		Male,Female,Unisex
+	}
+	
+	Product(){
+		this.id = 0;
+		this.imageUrl = "";
+		this.modelName = "Cloth";
+		this.brandName = "Unknown designer";
+		this.price =  0.0F;
+		this.primaryCategory = "";
+		this.subCategory = "";
+		this.gender = Gender.Unisex;
+		this.isDiscounted = 0;
+		this.priceCurrency = "USD";
+	}
 	
 	public Integer getId() {
 		return id;
@@ -92,5 +111,18 @@ public class Product {
 	}
 	public void setIsDiscounted(int isDiscounted) {
 		this.isDiscounted = isDiscounted;
+	}
+	public Gender getGender() {
+		return gender;
+	}
+	public void setGender(Gender gender) {
+		this.gender = gender;
 	}	
+	public void setGender(String gender) {
+		switch(gender) {
+			case "male" : this.gender = Gender.Male;
+			case "female" : this.gender = Gender.Female;
+			case "unisex" : this.gender = Gender.Unisex;	
+		}
+	}
 }
