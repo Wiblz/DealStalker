@@ -12,8 +12,8 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<s:head />
 </head>
-<body style="background-image: url('./backgrounds/background.jpg');">
-	<div class="container">
+<body>
+	<div class="container" style="background-image: url('./backgrounds/background.jpg');">
 		<div class="row">
 			<div style="display: flex; flex-direction: column; text-align: center; padding-top: 50px;">
 		    <div>
@@ -33,11 +33,11 @@
 		    </div>
 
 
-				<div style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: space-around; width: 80%; margin: 0 auto; margin-top: 50px;">
+				<div style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: space-around; width: 100%; margin: 0 auto; margin-top: 50px;">
 			    <s:iterator value="productList">
-						<div style="width: 30%; display: flex; flex-direction: row; justify-content: space-around;">
+						<div style="width: 30%; display: flex; flex-direction: row; justify-content: space-around; margin-top: 15px; margin-bottom: 15px;">
 				    	<div style="margin-right: 30px;">
-				      		<img style="width: 200px; height: 200px; border: 2px solid #e5e5e5; border-radius: 10px;" src="<s:property value="imageUrl"/>" alt="image" >
+				      		<img style="width: 200px; height: 300px; border: 2px solid #e5e5e5; border-radius: 10px;" src="<s:property value="imageUrl"/>" alt="image" >
 				      </div>
 				      <div style="display: flex; flex-direction: column; justify-content: space-around;">
                 <p style="font-size: 16px; font-weight: bold;"><s:property value="modelName"/></p>
