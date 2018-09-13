@@ -52,6 +52,7 @@ class SJSSpider(scrapy.spiders.CrawlSpider):
         is_discounted = len(response.xpath('//*[contains(@class, "price_reduced")]').extract()) != 0
         item_loader.add_value('is_discounted', is_discounted)
 
+        item_loader.add_value('resource', 'slamjamsocialism')
         item_loader.add_value('url', response.url)
         item_loader.add_value('date', str(datetime.datetime.now()))
 

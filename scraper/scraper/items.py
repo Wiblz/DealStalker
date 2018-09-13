@@ -13,6 +13,9 @@ class ScraperItem(scrapy.Item):
     image = scrapy.Field()
     description = scrapy.Field()
     is_discounted = scrapy.Field()
+    gender = scrapy.Field()  # m | w | u
+    inner_id = scrapy.Field()
+    db_category = scrapy.Field()
 
     resource = scrapy.Field()
     url = scrapy.Field()

@@ -84,6 +84,17 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         image_src = response.xpath('//*[@class="product-detail-image"]/@src').extract_first()
         item_loader.add_value('image', image_src)
 
+        gender = response.xpath('//*[@class="nav-toggle__item current"]/a[1]/text()').extract_first()
+        if gender == "MENS":
+            item_loader.add_value('gender', 'm')
+        else:
+            item_loader.add_value('gender', 'f')
+
+        inner_id = response.xpath('//*[@class="product_detail"]/ul[1]/li[last()]/text()').extract_first()
+        inner_id = inner_id.replace('Manufacturer Style No. ', '')
+        item_loader.add_value('inner_id', inner_id)
+
+        item_loader.add_value('resource', "forward")
         item_loader.add_value('url', response.url)
         item_loader.add_value('date', str(datetime.datetime.now()))
 

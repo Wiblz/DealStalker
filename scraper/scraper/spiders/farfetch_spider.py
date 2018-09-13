@@ -74,6 +74,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
                 available_sizes.append(value['description'])
         item_loader.add_value('available_sizes', item_properties['priceInfo']['default']['isOnSale'])
 
+        item_loader.add_value('resource', 'farfetch')
         item_loader.add_value('url', 'https://www.farfetch.com' + item_properties['details']['link']['href'])
         item_loader.add_value('date', str(datetime.datetime.now()))
 
