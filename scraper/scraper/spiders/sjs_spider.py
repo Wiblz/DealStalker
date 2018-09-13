@@ -1,5 +1,4 @@
 import datetime
-from urllib.parse import urlparse
 
 import scrapy
 from scrapy import Request
