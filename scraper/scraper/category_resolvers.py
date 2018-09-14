@@ -407,5 +407,10 @@ class SJSResolver():
             'Watches': 'Not really useful stuff',
         }
 
-    def resolve(self, categories, item_id):
-        # TODO
+    def resolve(self, category, item_id):
+        print('')
+        if category in self.category_dict:
+            return self.category_dict[category]
+        else:
+            self.logger.info('Item ' + str(item_id) + ' has unknown category : ' + str(category))
+            return 'Undefined'
