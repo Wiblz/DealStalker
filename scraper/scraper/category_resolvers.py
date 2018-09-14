@@ -15,7 +15,7 @@ class FarfetchResolver:
             '135981': 'Jeans & Trousers [W]',  # Pants[W]
             '135983': 'Tops [W]',  # Tops[W]
             '135985': 'Skirts [W]',  # Skirts[W]
-            '135996': 'Sanadals, Sliders & Flip Flpos',  # Slippers
+            '135996': 'Sanadals, Sliders & Flip Flops',  # Slippers
             '135998': 'Bags',  # Clutch Bags
             '135999': 'Bags [W]',  # Clutch Bags[W]
             '136000': 'Belts & Braces',  # Belts
@@ -119,12 +119,12 @@ class FarfetchResolver:
             '136300': 'Swimming wear [W]',  # Swimsuits[W]
             '136302': 'Boots [W]',  # Boots[W]
             '136303': 'Shoes [W]',  # BROGUES & OXFORDS[W]
-            '136304': 'Sanadals, Sliders & Flip Flpos [W]',  # ESPADRILLES[W]
-            '136305': 'Sanadals, Sliders & Flip Flpos [W]',  # Flip flops & Slides [W]
+            '136304': 'Sanadals, Sliders & Flip Flops [W]',  # ESPADRILLES[W]
+            '136305': 'Sanadals, Sliders & Flip Flops [W]',  # Flip flops & Slides [W]
             '136306': 'Shoes [W]',  # Loafers[W]
             '136307': 'Shoes [W]',  # Pumps[W]
-            '136308': 'Sanadals, Sliders & Flip Flpos [W]',  # Sandals[W]
-            '136309': 'Sanadals, Sliders & Flip Flpos [W]',  # Slippers[W]
+            '136308': 'Sanadals, Sliders & Flip Flops [W]',  # Sandals[W]
+            '136309': 'Sanadals, Sliders & Flip Flops [W]',  # Slippers[W]
             '136310': 'Sneakers & Trainers [W]',  # Sneakers[W]
             '136311': 'Bags [W]',  # Backpacks[W]
             '136312': 'Bags [W]',  # Luggage[W]
@@ -150,11 +150,11 @@ class FarfetchResolver:
             '136353': 'Boots',  # Boots
             '136354': 'Shoes',  # Brogues
             '136355': 'Shoes',  # Boat & Deck shoes
-            '136356': 'Sanadals, Sliders & Flip Flpos',  # Espadrilles
-            '136357': 'Sanadals, Sliders & Flip Flpos',  # Flip Flops & Slides
+            '136356': 'Sanadals, Sliders & Flip Flops',  # Espadrilles
+            '136357': 'Sanadals, Sliders & Flip Flops',  # Flip Flops & Slides
             '136358': 'Shoes',  # Lace-up Shoes
             '136359': 'Shoes',  # Loafers
-            '136360': 'Sanadals, Sliders & Flip Flpos',  # Sandals
+            '136360': 'Sanadals, Sliders & Flip Flops',  # Sandals
             '136361': 'Sneakers & Trainers',  # Low-Tops
             '136362': 'Bags',  # Backpacks
             '136363': 'Bags',  # Holdalls
@@ -311,4 +311,101 @@ class FarfetchResolver:
             self.logger.info('Non of the item ' + str(item_id) + ' categories are defined : ' + str(categories))
         elif len(resolved) > 1:
             self.logger.info('Item ' + str(item_id) + ' has ambiguous category list : ' + str(categories))
+        return 'Undefined'
 
+
+class SJSResolver():
+    def __init__(self):
+        self.logger = logging.getLogger('category_resolver')
+        handler = logging.FileHandler('logs/sjs_categories.log')
+        self.logger.addHandler(handler)
+        self.category_dict = {
+            'Jackets': 'Jackets & Coats',
+            'Vests': 'T-shirts',
+            'Blazers': 'Jackets & Coats',
+            'Lightweight Jackets': 'Jackets & Coats',
+            'Military Jackets': 'Jackets & Coats',
+            'Denim Jackets': 'Jackets & Coats',
+            'Softshell Jackets': 'Jackets & Coats',
+            'Tops': 'Hoodies & Sweatshirts',
+            'Crewneck Sweatshirts': 'Hoodies & Sweatshirts',
+            'Zip Up Hooded Sweatshirts': 'Hoodies & Sweatshirts',
+            'Pullover Hooded Sweatshirts': 'Hoodies & Sweatshirts',
+            'Zip Up Sweatshirts': 'Hoodies & Sweatshirts',
+            'Shirts': 'Shirts',
+            'Long Sleeves Shirts': 'Shirts',
+            'Short Sleeves Shirts': 'Shirts',
+            'T-Shirts': 'T-shirts',
+            'Long Sleeves T-Shirts': 'T-shirts',
+            'Short Sleeves T-Shirts': 'T-shirts',
+            'Polo Shirts': 'T-shirts',
+            'Tank Tops': 'T-shirts',
+            'Pants': 'Jeans & Trousers',
+            'Trousers': 'Jeans & Trousers',
+            'Chino Pants': 'Jeans & Trousers',
+            '5-Pocket Pants': 'Jeans & Trousers',
+            'Sweatpants': 'Jeans & Trousers',
+            'Overalls': 'Undefined',  # TODO
+            'Cargo Pants': 'Jeans & Trousers',
+            'Track Pants': 'Jeans & Trousers',
+            'Workpants': 'Jeans & Trousers',
+            'Tights': 'Jeans & Trousers',
+            'Shorts': 'Shorts',
+            'Sweatshorts': 'Shorts',
+            'Outerwear': 'Jackets & Coats',
+            'Coats': 'Jackets & Coats',
+            'Down Vests': 'T-shirts',
+            'Anorak Jackets': 'Jackets & Coats',
+            'Parkas': 'Jackets & Coats',
+            'Coach Jackets': 'Jackets & Coats',
+            'Bomber Jackets': 'Jackets & Coats',
+            'Down Jackets': 'Jackets & Coats',
+            'Leather Jackets': 'Jackets & Coats',
+            'Shearling Jackets': 'Jackets & Coats',
+            'Knitwear': 'Hoodies & Sweatshirts',
+            'Cardigans': 'Hoodies & Sweatshirts',
+            'Crewneck Knitwear': 'Hoodies & Sweatshirts',
+            'V-Neck Knit': 'Hoodies & Sweatshirts',
+            'Knit Vests': 'Hoodies & Sweatshirts',
+            'Turtlenecks': 'Hoodies & Sweatshirts',
+            'Underwear': 'Underwear',
+            'Briefs & Boxers': 'Underwear',
+            'Socks': 'Socks',
+            'Trunks': 'Swimming stuff',
+            'Sneakers': 'Sneakers & Trainers',
+            'Slip On': 'Sneakers & Trainers',
+            'Low Top': 'Sneakers & Trainers',
+            'High Top': 'Sneakers & Trainers',
+            'Boots': 'Boots',
+            'Chelsea Boots': 'Boots',
+            'Laced Boots': 'Boots',
+            'Shearling Lined Shoes': 'Shoes',
+            'Sandals': 'Sanadals, Sliders & Flip Flops',
+            'Slippers': 'Sanadals, Sliders & Flip Flops',
+            'Shearling Lined Slippers': 'Sanadals, Sliders & Flip Flops',
+            'Loafers': 'Shoes',
+            'Lace Ups': 'Shoes',
+            'Bags': 'Bags',
+            'Totes': 'Bags',
+            'Belt Bags': 'Bags',
+            'Backpacks': 'Bags',
+            'Duffle Bags': 'Bags',
+            'Wash Bags': 'Bags',
+            'Messenger Bags': 'Bags',
+            'Bucket Bags': 'Bags',
+            'Belts': 'Belts & Braces',
+            'Hats': 'Hats & Caps',
+            'Jewellery': 'Not really useful stuff',
+            'Keychains': 'Not really useful stuff',
+            'Scarves & Gloves': 'Gloves and Scarfs',
+            'Sunglasses': 'Glasses',
+            'Wallets & Pouches': 'Wallets & Purses',
+            'Wallets': 'Wallets & Purses',
+            'Cardholders': 'Wallets & Purses',
+            'Document Holders': 'Wallets & Purses',
+            'Pouches': 'Wallets & Purses',
+            'Watches': 'Not really useful stuff',
+        }
+
+    def resolve(self, categories, item_id):
+        # TODO

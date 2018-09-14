@@ -14,7 +14,9 @@ class SJSSpider(scrapy.spiders.CrawlSpider):
     name = "SJS"
     alowed_domains = ["slamjamsocialism"]
     start_urls = (
-        "https://www.slamjamsocialism.com/clothing/",
+        'https://www.slamjamsocialism.com/clothing/',
+        'https://www.slamjamsocialism.com/shoes/',
+        'https://www.slamjamsocialism.com/accessories/'
     )
 
     rules = (
@@ -51,6 +53,11 @@ class SJSSpider(scrapy.spiders.CrawlSpider):
         is_discounted = len(response.xpath('//*[contains(@class, "price_reduced")]').extract()) != 0
         item_loader.add_value('is_discounted', is_discounted)
 
+        inner_id = response.xpath('//*[@name="id_product"]/@value').extract_first()
+        item_loader.add_value('inner_id', inner_id)
+
+        # SJS has only clothing for men
+        item_loader.add_value('gender', 'm')
         item_loader.add_value('resource', 'slamjamsocialism')
         item_loader.add_value('url', response.url)
         item_loader.add_value('date', str(datetime.datetime.now()))
