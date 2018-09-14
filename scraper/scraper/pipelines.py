@@ -23,13 +23,7 @@ class ScraperPipeline(object):
               "VALUES (%s, %s, %s, %s ,%s, %s, %s, %s,%s, %s, %s)" )
         self.add_field = ("INSERT INTO Products " 
               "(%s) "
-              "VALUES ('%s')")
-        self.update_field = ("UPDATE Products " 
-              "SET %s = '%s' "
-              "WHERE ModelName='%s'")
-        self.update_int = ("UPDATE Products " 
-              "SET %s = %s "
-              "WHERE ModelName='%s'")
+              "VALUES (%s)")
 
         self.update_gender = (""" UPDATE Products SET Gender='u' WHERE InnerId='%s' AND Color='%s' """ )
 
@@ -37,59 +31,53 @@ class ScraperPipeline(object):
     def process_item(self, item, spider):
 
         self.duplicate_check =  """ SELECT Color, InnerId, Gender FROM Products WHERE Color='%s' AND InnerId='%s' """ % (item['color'][0], item['inner_id'][0])
-
-
         self.cursor.execute(self.duplicate_check)
-
-        print("\n\n\n\n\n\n\n\n\n\n\n\n")
-        print(self.add_field % ('ModelName',item['model'][0]))
-
+        
         dupiclicates = self.cursor.fetchone()
         
         if dupiclicates is None: 
-            #self.cursor.execute(self.add_product, 
-            #(item['brand'][0].encode('utf-8'),
-            #item['model'][0].encode('utf-8'),
-            #item['description'][0].encode('utf-8'),
-            #item['price'][0],
-            #item['price_currency'][0].encode('utf-8'),
-            #item['image'][0].encode('utf-8'), 
-            #item['url'][0].encode('utf-8'), 
-            #item['is_discounted'][0]),
-            #item['color'][0].encode('utf-8'),
-            #item['inner_id'][0].encode('utf-8'),
-            #item['gender'][0].encode('utf-8'))
+            field_list = []
+            name_str = ''
             if 'model' in item: 
-                print(self.add_field % ('ModelName',item['model'][0]))
-                self.cursor.execute(self.add_field % ('ModelName',item['model'][0]))
+                field_list.append(item['model'][0].encode('utf8').decode())
+                name_str += ' ModelName'
             if 'description' in item: 
-                print(self.update_field % ('Description',item['description'][0],item['model'][0]))
-                self.cursor.execute(self.update_field % ('Description',item['description'][0],item['model'][0]))
+                field_list.append(item['description'][0].encode('utf8').decode())
+                name_str += ', Description'
             if 'price' in item:
-                print(self.update_int % ('Price',item['price'][0],item['model'][0])) 
-                self.cursor.execute(self.update_int % ('Price',item['price'][0],item['model'][0]))
+                field_list.append(item['price'][0])
+                name_str += ', Price'
             if 'price_currency' in item:
-                print(self.update_field % ('PriceCurrency',item['price_currency'][0],item['model'][0])) 
-                self.cursor.execute(self.update_field % ('PriceCurrency',item['price_currency'][0],item['model'][0]))
+                field_list.append(item['price_currency'][0].encode('utf8').decode())
+                name_str += ', PriceCurrency'
             if 'image' in item: 
-                print(self.update_field % ('ImageUrl',item['image'][0],item['model'][0]))
-                self.cursor.execute(self.update_field % ('ImageUrl',item['image'][0],item['model'][0]))
+                field_list.append(item['image'][0].encode('utf8').decode())
+                name_str += ', ImageUrl'
             if 'url' in item: 
-                print(self.update_field % ('SourceUrl',item['url'][0],item['model'][0]))
-                self.cursor.execute(self.update_field % ('SourceUrl',item['url'][0],item['model'][0]))
+                field_list.append(item['url'][0].encode('utf8').decode())
+                name_str += ', SourceUrl'
             if 'is_discounted' in item: 
-                self.cursor.execute(self.update_field % ('isDiscounted',item['is_discounted'][0],item['model'][0]))
+                field_list.append(item['is_discounted'][0])
+                name_str += ', isDiscounted'
             if 'color' in item: 
-                self.cursor.execute(self.update_field % ('Color',item['color'][0],item['model'][0]))
+                field_list.append(item['color'][0].encode('utf8').decode())
+                name_str += ', Color'
             if 'inner_id' in item: 
-                self.cursor.execute(self.update_field % ('InnerId',item['inner_id'][0],item['model'][0]))
+                field_list.append(item['inner_id'][0].encode('utf8').decode())
+                name_str += ', InnerId'
             if 'gender' in item: 
-                self.cursor.execute(self.update_field % ('Gender',item['gender'][0],item['model'][0]))
+                field_list.append(item['gender'][0].encode('utf8').decode())
+                name_str += ', Gender'
             if 'brand' in item: 
-                self.cursor.execute(self.update_field % ('Brand',item['brand'][0],item['model'][0]))
+                field_list.append(item['brand'][0].encode('utf8').decode())
+                name_str += ', Brand'
+
+            format_strings = ','.join(['%s'] * len(field_list))
+            self.cursor.execute(self.add_field % (name_str, format_strings),
+                tuple(field_list))
         else:
-            if item['gender'][0] != dupiclicates['Gender']:
-                self.cursor.execute(self.update_gender,(item['inner_id'][0],item['color'][0]))
+            if item['gender'][0] != dupiclicates[2]:
+                self.cursor.execute(self.update_gender,tuple(item['inner_id'][0],item['color'][0]))
 
         
         self.cnx.commit()
