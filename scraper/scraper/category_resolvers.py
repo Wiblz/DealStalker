@@ -408,9 +408,60 @@ class SJSResolver():
         }
 
     def resolve(self, category, item_id):
-        print('')
         if category in self.category_dict:
             return self.category_dict[category]
         else:
             self.logger.info('Item ' + str(item_id) + ' has unknown category : ' + str(category))
             return 'Undefined'
+
+
+class ForwardResolver():
+    def __init__(self):
+        self.logger = logging.getLogger('category_resolver')
+        handler = logging.FileHandler('logs/forward_categories.log')
+        self.logger.addHandler(handler)
+        self.category_dict = {
+            'Shirts': 'Shirts',
+            'T-Shirts': 'T-shirts',
+            'Jackets & Coats': 'Jackets & Coats',
+            'Hoodies & Sweatshirts': 'Hoodies & Sweatshirts',
+            'Sneakers': 'Sneakers & Trainers',
+            'Boots': 'Boots',
+            'Casual Shoes': 'Shoes',
+            'Dress Shoes': 'Shoes',
+            'Sandals': 'Sanadals, Sliders & Flip Flops',
+            'Backpacks': 'Bags',
+            'Shorts': 'Shorts',
+            'Messenger & Duffel': 'Bags',
+            'Small Accessories': 'Bags',
+            'Totes': 'Bags',
+            'Belts': 'Belts & Braces',
+            'Hats': 'Hats & Caps',
+            'Home & Beauty': 'Not really useful stuff',
+            'Jewelry': 'Not really useful stuff',
+            'Sunglasses & Optical': 'Glasses',
+            'Ties': 'Ties',
+            'Scarves & Gloves': 'Gloves and Scarfs',
+            'Slim': 'Jeans & Trousers',
+            'Polos': 'Shirts',
+            'Pants': 'Jeans & Trousers',
+            'Trousers': 'Jeans & Trousers',
+            'Sweatpants': 'Jeans & Trousers',
+            'Sweaters & Knits': 'Hoodies & Sweatshirts',
+            'Jackets & Shirts': 'Jackets & Coats',
+            'Tops': 'Hoodies & Sweatshirts',
+            'Bags': 'Bags',
+            'Watches': 'Not really useful stuff',
+            'Other': 'Not really useful stuff',
+            'Socks': 'Socks',
+            'Keychains': 'Not really useful stuff',
+            'Tech Accessories': 'Not really useful stuff',
+        }
+
+    def resolve(self, categories, item_id):
+        for category in categories:
+            if category in self.category_dict:
+                return self.category_dict[category]
+
+        self.logger.info('Item ' + str(item_id) + ' has unknown category : ' + str(list(categories)))
+        return 'Undefined'
