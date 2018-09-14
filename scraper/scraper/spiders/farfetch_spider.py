@@ -11,8 +11,10 @@ import urllib.parse as urlparse
 
 
 class FarfetchSpider(scrapy.spiders.CrawlSpider):
-    name = "farfetch"
-    alowed_domains = ["farfetch"]
+    name = 'farfetch'
+    alowed_domains = ['farfetch']
+
+    custom_settings = {'COOKIES_ENABLED': 'True'}
 
     def __init__(self):
         super().__init__()
