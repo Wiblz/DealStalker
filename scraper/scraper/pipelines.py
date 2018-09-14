@@ -21,17 +21,19 @@ class ScraperPipeline(object):
         self.add_product = ("INSERT INTO Products "
               "(Brand, ModelName, Description,Price, PriceCurrency,ImageUrl, SourceUrl,isDiscounted, Color, InnerId, Gender) "
               "VALUES (%s, %s, %s, %s ,%s, %s, %s, %s,%s, %s, %s)" )
-        self.add_field = ("INSERT INTO Products " 
-              "(%s) "
-              "VALUES (%s)")
+        
+        self.add_field = ("INSERT INTO Products " "(%s) " "VALUES (%s)")
 
         self.update_gender = (""" UPDATE Products SET Gender='u' WHERE InnerId='%s' AND Color='%s' """ )
+        self.update_price = (""" UPDATE Products SET Price=%s WHERE InnerId='%s' AND Color='%s' """ )
+        self.update_source = (""" UPDATE Products SET SourceUrl='%s' WHERE InnerId='%s' AND Color='%s' """ )
+        self.update_discount = (""" UPDATE Products SET isDiscounted=%s WHERE InnerId='%s' AND Color='%s' """ )
 
-    
     def process_item(self, item, spider):
 
-        self.duplicate_check =  """ SELECT Color, InnerId, Gender FROM Products WHERE Color='%s' AND InnerId='%s' """ % (item['color'][0], item['inner_id'][0])
-        self.cursor.execute(self.duplicate_check)
+        duplicate_check =  """ SELECT Color, InnerId, Gender, Price, SourceUrl FROM Products WHERE Color='%s' AND InnerId='%s' AND ResourceUrl='%s'""" % (item['color'][0], item['inner_id'][0],item['resource'][0])
+        
+        self.cursor.execute(duplicate_check)
         
         dupiclicates = self.cursor.fetchone()
         
@@ -63,7 +65,7 @@ class ScraperPipeline(object):
                 field_list.append(item['color'][0].encode('utf8').decode())
                 name_str += ', Color'
             if 'inner_id' in item: 
-                field_list.append(item['inner_id'][0].encode('utf8').decode())
+                field_list.append(str(item['inner_id'][0]).encode('utf8').decode())
                 name_str += ', InnerId'
             if 'gender' in item: 
                 field_list.append(item['gender'][0].encode('utf8').decode())
@@ -71,14 +73,21 @@ class ScraperPipeline(object):
             if 'brand' in item: 
                 field_list.append(item['brand'][0].encode('utf8').decode())
                 name_str += ', Brand'
-
+            if 'resource' in item: 
+                field_list.append(item['resource'][0].encode('utf8').decode())
+                name_str += ', ResourceUrl'
+            # Create and execute query
             format_strings = ','.join(['%s'] * len(field_list))
             self.cursor.execute(self.add_field % (name_str, format_strings),
                 tuple(field_list))
         else:
-            if item['gender'][0] != dupiclicates[2]:
-                self.cursor.execute(self.update_gender,tuple(item['inner_id'][0],item['color'][0]))
-
+            if 'gender' in item and item['gender'][0] != dupiclicates[2]:
+                self.cursor.execute(self.update_gender % (item['inner_id'][0],item['color'][0]))
+            #Here should be mechanism for adding price to monitor struct
+            if 'price' in item and item['price'][0] != dupiclicates[3]:
+                self.cursor.execute(self.update_price % (item['price'][0],item['inner_id'][0],item['color'][0]))
+            if item['url'][0] != dupiclicates[4]:
+                self.cursor.execute(self.update_source % (item['url'][0],item['inner_id'][0],item['color'][0]))
         
         self.cnx.commit()
         return item
