@@ -25,10 +25,10 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
             'https://www.fwrd.com/mens-category-bags/6c97c1/?navsrc=main',
             'https://www.fwrd.com/mens-category-accessories/8ad9de/?navsrc=main',
 
-            # 'https://www.fwrd.com/category-clothing/3699fc/?navsrc=main',
-            # 'https://www.fwrd.com/category-shoes/3f40a9/?navsrc=main',
-            # 'https://www.fwrd.com/category-bags/2df9df/?navsrc=main',
-            # 'https://www.fwrd.com/category-accessories/2fa629/?navsrc=main'
+            'https://www.fwrd.com/category-clothing/3699fc/?navsrc=main',
+            'https://www.fwrd.com/category-shoes/3f40a9/?navsrc=main',
+            'https://www.fwrd.com/category-bags/2df9df/?navsrc=main',
+            'https://www.fwrd.com/category-accessories/2fa629/?navsrc=main'
         ]
         for url in urls:
             self.current_url_base = url
@@ -108,7 +108,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         item_loader.add_value('inner_id', inner_id)
 
         inner_categories = list(map(str.strip, response.xpath('//*[@id="ctaMainBtn"]/button[1]/@data-category').extract_first().split(':')))
-        item_loader.add_value('db_category', self.category_resolver.resolve(inner_categories, inner_id))
+        item_loader.add_value('db_category', self.category_resolver.resolve(inner_categories, inner_id, gender))
 
         item_loader.add_value('resource', "forward")
         item_loader.add_value('url', response.url)

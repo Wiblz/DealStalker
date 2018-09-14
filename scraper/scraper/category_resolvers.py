@@ -1,5 +1,6 @@
 import logging
 
+
 class FarfetchResolver:
     def __init__(self):
         self.logger = logging.getLogger('category_resolver')
@@ -16,8 +17,8 @@ class FarfetchResolver:
             '135983': 'Tops [W]',  # Tops[W]
             '135985': 'Skirts [W]',  # Skirts[W]
             '135996': 'Sanadals, Sliders & Flip Flops',  # Slippers
-            '135998': 'Bags',  # Clutch Bags
-            '135999': 'Bags [W]',  # Clutch Bags[W]
+            '135998': 'Wallets & Purses',  # Clutch Bags
+            '135999': 'Wallets & Purses [W]',  # Clutch Bags[W]
             '136000': 'Belts & Braces',  # Belts
             '136001': 'Belts & Braces [W]',  # Belts[W]
             '136002': 'Gloves and Scarfs',  # Scarves
@@ -314,7 +315,7 @@ class FarfetchResolver:
         return 'Undefined'
 
 
-class SJSResolver():
+class SJSResolver:
     def __init__(self):
         self.logger = logging.getLogger('category_resolver')
         handler = logging.FileHandler('logs/sjs_categories.log')
@@ -415,12 +416,12 @@ class SJSResolver():
             return 'Undefined'
 
 
-class ForwardResolver():
+class ForwardResolver:
     def __init__(self):
         self.logger = logging.getLogger('category_resolver')
         handler = logging.FileHandler('logs/forward_categories.log')
         self.logger.addHandler(handler)
-        self.category_dict = {
+        self.men_category_dict = {
             'Shirts': 'Shirts',
             'T-Shirts': 'T-shirts',
             'Jackets & Coats': 'Jackets & Coats',
@@ -458,10 +459,67 @@ class ForwardResolver():
             'Tech Accessories': 'Not really useful stuff',
         }
 
-    def resolve(self, categories, item_id):
-        for category in categories:
-            if category in self.category_dict:
-                return self.category_dict[category]
+        # TODO: Deal with 'Denim + Black' and 'Shoes + Black' cases.
+        self.women_category_dict = {
+            'Dresses': 'Dresses [W]',
+            'Tops': 'Tops [W]',
+            'Jackets & Coats': 'Jackets & Coats [W]',
+            'Jumpsuits & Rompers': 'Dresses [W]',
+            'Sweaters & Knits': 'Hoodies & Sweatshirts [W]',
+            'Pants': 'Jeans & Trousers [W]',
+            'Skirts': 'Skirts [W]',
+            'Shorts': 'Shorts [W]',
+            'Intimates': 'Lingerie & Nightwear & Kimonos [W]',
+            'Swimwear': 'Swimming wear [W]',
+            'Heels': 'Shoes [W]',
+            'Sneakers': 'Sneakers & Trainers [W]',
+            'Flats': 'Shoes [W]',
+            'Booties': 'Shoes [W]',
+            'Boots': 'Boots [W]',
+            'Sandals': 'Sanadals, Sliders & Flip Flops [W]',
+            'Wedges': 'Shoes [W]',
+            'Crossbody Bags': 'Bags [W]',
+            'Shoulder Bags': 'Bags [W]',
+            'Totes': 'Bags [W]',
+            'Clutches': 'Wallets & Purses [W]',
+            'Wallets': 'Wallets & Purses [W]',
+            'Jewelry': 'Not really useful stuff [W]',
+            'Fine Jewelry': 'Not really useful stuff [W]',
+            'Belts': 'Belts & Braces [W]',
+            'Hats': 'Hats & Caps [W]',
+            'Home & Beauty': 'Not really useful stuff [W]',
+            'Sunglasses & Optical': 'Glasses [W]',
+            'Straight': 'Jeans & Trousers [W]',
+            'Skinny': 'Jeans & Trousers [W]',
+            'Cropped': 'Jeans & Trousers [W]',
+            'Cropped Flare': 'Jeans & Trousers [W]',
+            'High Waisted': 'Jeans & Trousers [W]',
+            'Destroyed': 'Jeans & Trousers [W]',
+            'Flared & Wide Leg': 'Jeans & Trousers [W]',
+            'Small Leather Goods': 'Wallets & Purses [W]',
+            'Backpacks': 'Bags [W]',
+            'Travel Bags': 'Bags [W]',
+            'Satchels': 'Bags [W]',
+            'Hobos': 'Bags [W]',
+            'Bucket Bags': 'Bags [W]',
+            'Fanny Packs': 'Bags [W]',
+            'Other': 'Not really useful stuff [W]',
+            'Mini Bags': 'Wallets & Purses [W]',
+            'Tech Accessories': 'Not really useful stuff [W]',
+            'Keychains': 'Not really useful stuff [W]',
+            'Hosiery & Socks': 'Socks & Tights [W]',
+            'Scarves & Gloves': 'Gloves and Scarfs [W]',
+        }
 
-        self.logger.info('Item ' + str(item_id) + ' has unknown category : ' + str(list(categories)))
+    def resolve(self, categories, item_id, gender):
+        if gender == 'MENS':
+            category_dict = self.men_category_dict
+        else:
+            category_dict = self.women_category_dict
+
+        for category in categories:
+            if category in category_dict:
+                return category_dict[category]
+
+        self.logger.info('Item ' + str(item_id) + ' has unknown category : ' + str(categories))
         return 'Undefined'
