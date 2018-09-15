@@ -9,7 +9,9 @@ from __future__ import print_function
 from datetime import date, datetime, timedelta
 import mysql.connector
 import pymysql
-
+import pymongo
+from pymongo import MongoClient
+import pprint
 
 class ScraperPipeline(object):
     def __init__(self):
@@ -29,6 +31,10 @@ class ScraperPipeline(object):
         self.update_source = (""" UPDATE Products SET SourceUrl='%s' WHERE InnerId='%s' AND Color='%s' """ )
         self.update_discount = (""" UPDATE Products SET isDiscounted=%s WHERE InnerId='%s' AND Color='%s' """ )
 
+        self.mongo_client = MongoClient('localhost', 27017)
+        self.db = self.mongo_client['dealstalker']
+        self.product_collection = self.db['Products']
+
     def process_item(self, item, spider):
 
         duplicate_check =  """ SELECT Color, InnerId, Gender, Price, SourceUrl FROM Products WHERE Color='%s' AND InnerId='%s' AND ResourceUrl='%s'""" % (item['color'][0], item['inner_id'][0],item['resource'][0])
@@ -38,6 +44,7 @@ class ScraperPipeline(object):
         dupiclicates = self.cursor.fetchone()
         
         if dupiclicates is None: 
+            #mysql query 	
             field_list = []
             name_str = ''
             if 'model' in item: 
@@ -80,15 +87,37 @@ class ScraperPipeline(object):
             format_strings = ','.join(['%s'] * len(field_list))
             self.cursor.execute(self.add_field % (name_str, format_strings),
                 tuple(field_list))
+            
+            #mongo query
+            self.product_collection.update({"inner_id":item['inner_id'],"color":item['color']},
+                {
+                  "inner_id":item['inner_id'],
+                  "color":item['color'],
+                  "sizes":item['available_sizes'],
+                  "date_price":
+                  [
+                      {
+                         "date":item['date'], 
+                         "price":item['price'] 
+                      }
+                  ] 
+                }
+            ,True)
+
         else:
             if 'gender' in item and item['gender'][0] != dupiclicates[2]:
                 self.cursor.execute(self.update_gender % (item['inner_id'][0],item['color'][0]))
             #Here should be mechanism for adding price to monitor struct
             if 'price' in item and item['price'][0] != dupiclicates[3]:
                 self.cursor.execute(self.update_price % (item['price'][0],item['inner_id'][0],item['color'][0]))
+                self.product_collection.update_one({"inner_id":item['inner_id'],"color":item['color']},{'$push' : {"date":item['date']},'$push':{"price":item['price']}})
             if item['url'][0] != dupiclicates[4]:
                 self.cursor.execute(self.update_source % (item['url'][0],item['inner_id'][0],item['color'][0]))
-        
+
+        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
+        #pprint.pprint(self.product_collection.find_one())
+        for p in self.product_collection.find():
+            pprint.pprint(p)
         self.cnx.commit()
         return item
 
