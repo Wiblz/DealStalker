@@ -11,7 +11,6 @@ import mysql.connector
 import pymysql
 import pymongo
 from pymongo import MongoClient
-import pprint
 
 class ScraperPipeline(object):
     def __init__(self):
@@ -43,6 +42,7 @@ class ScraperPipeline(object):
         
         dupiclicates = self.cursor.fetchone()
         
+        #We do not have this item in the db
         if dupiclicates is None: 
             #mysql query 	
             field_list = []
@@ -103,21 +103,25 @@ class ScraperPipeline(object):
                   ] 
                 }
             ,True)
-
+        # update item in the db
         else:
             if 'gender' in item and item['gender'][0] != dupiclicates[2]:
                 self.cursor.execute(self.update_gender % (item['inner_id'][0],item['color'][0]))
             #Here should be mechanism for adding price to monitor struct
             if 'price' in item and item['price'][0] != dupiclicates[3]:
                 self.cursor.execute(self.update_price % (item['price'][0],item['inner_id'][0],item['color'][0]))
-                self.product_collection.update_one({"inner_id":item['inner_id'],"color":item['color']},{'$push' : {"date":item['date']},'$push':{"price":item['price']}})
+                self.product_collection.update_one({"inner_id":item['inner_id'],"color":item['color']},
+                    {'$push' :  
+                        { "date_price" : 
+                          { 
+                            "date": item['date'], 
+                            "price": item['price'] 
+                          }
+                        }
+                    })
             if item['url'][0] != dupiclicates[4]:
                 self.cursor.execute(self.update_source % (item['url'][0],item['inner_id'][0],item['color'][0]))
 
-        print('\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
-        #pprint.pprint(self.product_collection.find_one())
-        for p in self.product_collection.find():
-            pprint.pprint(p)
         self.cnx.commit()
         return item
 
@@ -125,6 +129,8 @@ class ScraperPipeline(object):
     def close_spider(self, spider):
         self.cursor.close()
         self.cnx.close()
+
+        self.mongo_client.close()
 
 
             
