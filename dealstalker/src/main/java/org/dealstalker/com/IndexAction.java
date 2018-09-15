@@ -45,9 +45,9 @@ public class IndexAction extends ActionSupport {
 	public Integer productPerPage = 50;
 	
     public String execute() throws Exception {
-        Connection cnx = DriverLoader.getConnection();
+        Connection cnx = DriverLoader.getMySqlConnection();
         Statement stmt = null;
-        String query = "Select * from Products;";
+        String query = "Select * from Products LIMIT 10000;";
         
         productList = new ArrayList<Product>();
         
@@ -84,19 +84,7 @@ public class IndexAction extends ActionSupport {
         		  if (stmt != null) {  stmt.close(); }
         		  cnx.close();
         	}
-// May be used for debug
         
-//        for(Product p :productList) {
-//        	System.out.println(p.getImageUrl());
-//        	System.out.println(p.getBrandName());
-//        	System.out.println(p.getDescription());
-//        	System.out.println(p.getModelName());
-//        	System.out.println(p.getResource());
-//        	System.out.println(p.getSource());
-//        }
-        
-        
-    	
         return SUCCESS;
     }
     
@@ -107,7 +95,7 @@ public class IndexAction extends ActionSupport {
     		return productList;
     	
     	return  
-    		 productList.subList(currentPage*50, 
+    		 productList.subList(currentPage * 50, 
 			 ((currentPage + 1) * 50 < productList.size()) ? 
 					(currentPage+1) * 50 : productList.size() - 1);
     }

@@ -29,6 +29,7 @@ class ScraperPipeline(object):
         self.update_price = (""" UPDATE Products SET Price=%s WHERE InnerId='%s' AND Color='%s' """ )
         self.update_source = (""" UPDATE Products SET SourceUrl='%s' WHERE InnerId='%s' AND Color='%s' """ )
         self.update_discount = (""" UPDATE Products SET isDiscounted=%s WHERE InnerId='%s' AND Color='%s' """ )
+        self.update_category = (""" UPDATE Products SET SubCategory='%s' WHERE InnerId='%s' AND Color='%s' """ )
 
         self.mongo_client = MongoClient('localhost', 27017)
         self.db = self.mongo_client['dealstalker']
@@ -36,7 +37,7 @@ class ScraperPipeline(object):
 
     def process_item(self, item, spider):
 
-        duplicate_check =  """ SELECT Color, InnerId, Gender, Price, SourceUrl FROM Products WHERE Color='%s' AND InnerId='%s' AND ResourceUrl='%s'""" % (item['color'][0], item['inner_id'][0],item['resource'][0])
+        duplicate_check =  """ SELECT Color, InnerId, Gender, Price, SourceUrl, isDiscounted, SubCategory FROM Products WHERE Color='%s' AND InnerId='%s' AND ResourceUrl='%s'""" % (item['color'][0], item['inner_id'][0],item['resource'][0])
         
         self.cursor.execute(duplicate_check)
         
@@ -83,6 +84,9 @@ class ScraperPipeline(object):
             if 'resource' in item: 
                 field_list.append(item['resource'][0].encode('utf8').decode())
                 name_str += ', ResourceUrl'
+            if 'db_category' in item:
+                field_list.append(item['db_category'][0].encode('utf8').decode())
+                name_str += ', SubCategory'               
             # Create and execute query
             format_strings = ','.join(['%s'] * len(field_list))
             self.cursor.execute(self.add_field % (name_str, format_strings),
@@ -107,7 +111,12 @@ class ScraperPipeline(object):
         else:
             if 'gender' in item and item['gender'][0] != dupiclicates[2]:
                 self.cursor.execute(self.update_gender % (item['inner_id'][0],item['color'][0]))
-            #Here should be mechanism for adding price to monitor struct
+            if item['url'][0] != dupiclicates[4]:
+                self.cursor.execute(self.update_source % (item['url'][0],item['inner_id'][0],item['color'][0]))
+            if 'is_discounted' in item and item['is_discounted'] != dupiclicates[5]:
+                self.cursor.execute(self.update_discount % (item['is_discounted'][0],item['inner_id'][0],item['color'][0]))
+            if 'db_category'in item and item['db_category'] != dupiclicates[6]:
+                self.cursor.execute(self.update_category % (item['db_category'][0],item['inner_id'][0],item['color'][0]))
             if 'price' in item and item['price'][0] != dupiclicates[3]:
                 self.cursor.execute(self.update_price % (item['price'][0],item['inner_id'][0],item['color'][0]))
                 self.product_collection.update_one({"inner_id":item['inner_id'],"color":item['color']},
@@ -119,9 +128,7 @@ class ScraperPipeline(object):
                           }
                         }
                     })
-            if item['url'][0] != dupiclicates[4]:
-                self.cursor.execute(self.update_source % (item['url'][0],item['inner_id'][0],item['color'][0]))
-
+            self.product_collection.update({"inner_id":item['inner_id'],"color":item['color']},{"sizes":item['available_sizes']},True)
         self.cnx.commit()
         return item
 
