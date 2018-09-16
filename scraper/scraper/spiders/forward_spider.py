@@ -12,6 +12,8 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
     name = "forward"
     alowed_domains = ["fwrd"]
 
+    custom_settings = {'COOKIES_ENABLED': 'True'}
+
     def __init__(self):
         super().__init__()
         self.pages_available = None
@@ -74,7 +76,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
 
         # removing '$' at the beginning of price string and casting to float
         item_loader.add_value('price', price,
-                              MapCompose(lambda i: i[1:].replace(',', ''), float))
+                              MapCompose(lambda i: ''.join(ch for ch in i if ch.isdigit()), float))
 
         # Supposedly currency of all 'forward' items will be in dollars as we asked so in cookies
         item_loader.add_value('price_currency', 'USD')
@@ -101,7 +103,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         if gender == "MENS":
             item_loader.add_value('gender', 'm')
         else:
-            item_loader.add_value('gender', 'f')
+            item_loader.add_value('gender', 'w')
 
         inner_id = response.xpath('//*[@class="product_detail"]/ul[1]/li[last()]/text()').extract_first()
         inner_id = inner_id.replace('Manufacturer Style No. ', '')
