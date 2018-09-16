@@ -15,13 +15,13 @@
             <result>/WEB-INF/jsp/index.jsp</result>
         </action>
         
-        <action name="startRegister" class="org.dealstalker.com.StartRegister" method="execute">
- 			<result name="success">/WEB-INF/jsp/register.jsp</result>
+        <action name="startRegister">
+ 			<result>/WEB-INF/jsp/register.jsp</result>
         </action>
         
-        <action name="register" class="org.dealstalker.com.Register" method="execute">
+        <action name="register" class="org.dealstalker.com.RegisterAction" method="execute">
  			<result name="success">/WEB-INF/jsp/thankyou.jsp</result>
- 			<result name="input">/WEB-INF/jsp/register.jsp</result>
+ 			<result name="error">/WEB-INF/jsp/register.jsp</result>
         </action>
         
         <action name="startSignin" class="org.dealstalker.com.StartSignin" method="execute">

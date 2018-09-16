@@ -11,7 +11,9 @@ import com.mongodb.MongoClientURI;
 public class DriverLoader {
 	public static void Load(){
 		try {
+			System.out.println("HELLO!");
 	        Class.forName("com.mysql.jdbc.Driver").newInstance();
+	        System.out.println("HELLO!2222");
 	    } catch (Exception ex) {
 	    	System.out.println(ex.getStackTrace());
 	    }

@@ -4,7 +4,6 @@ public class Customer {
     private String firstName = "";
     private String lastName = "";
     private String email = "";
-    private int age;
     private String password = "";
     private String repeatedPassword = "";
 
@@ -31,16 +30,7 @@ public class Customer {
     public void setEmail(String email) {
         	this.email = email;
     }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
 	
-
     public String getRepeatedPassword() {
         return repeatedPassword;
     }
@@ -59,7 +49,7 @@ public class Customer {
 
     public String toString() {
         return "First Name: " + getFirstName() + "\n" + " Last Name:  " + getLastName() + "\n" +
-        " Email:      " + getEmail() + "\n" + " Age:      " + getAge() ;
+        " Email:      " + getEmail();
     }
 
 }
