@@ -1,8 +1,12 @@
 package org.dealstalker.com;
 
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 
 public class DriverLoader {
 	public static void Load(){
@@ -14,7 +18,7 @@ public class DriverLoader {
 	}
 	
 	
-	public static Connection getConnection() {
+	public static Connection getMySqlConnection() {
 		Connection conn = null;
 		try {
 		    conn =
@@ -33,5 +37,15 @@ public class DriverLoader {
 		}
 		
 		return conn;
+	}
+	
+	public static MongoClient getMongoClient() {
+		try {
+			return new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

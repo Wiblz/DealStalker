@@ -20,6 +20,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -44,10 +45,32 @@ public class IndexAction extends ActionSupport {
 	public Integer currentPage = 0;
 	public Integer productPerPage = 50;
 	
-    public String execute() throws Exception {
-        Connection cnx = DriverLoader.getConnection();
+	public SearchEntry entry;
+	public List<String> categories =  Arrays.asList("Clothing","Shoes","Accessories");
+	public List<String> genders = Arrays.asList("Male","Female","Doesn`t matter, I am not a sexist!!");
+	
+	public List<String> aCat = Arrays.asList( "Activewear" ,
+			"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
+			"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff");
+	
+	public List<String> bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
+	
+	public List<String> cCat = Arrays.asList("Wallets & Purses","Socks" ,"Begs" ,
+			"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
+			"Gloves and Scarfs","Underwear" ,"Not really useful stuff");
+	
+	public List<String> subCategories = new ArrayList<String>();
+	
+	
+    public String execute() throws Exception {        
+
+        return SUCCESS;
+    }
+    
+    public String search() throws Exception {        
+        Connection cnx = DriverLoader.getMySqlConnection();
         Statement stmt = null;
-        String query = "Select * from Products;";
+        String query = "Select * from Products LIMIT 10000;";
         
         productList = new ArrayList<Product>();
         
@@ -84,38 +107,29 @@ public class IndexAction extends ActionSupport {
         		  if (stmt != null) {  stmt.close(); }
         		  cnx.close();
         	}
-// May be used for debug
-        
-//        for(Product p :productList) {
-//        	System.out.println(p.getImageUrl());
-//        	System.out.println(p.getBrandName());
-//        	System.out.println(p.getDescription());
-//        	System.out.println(p.getModelName());
-//        	System.out.println(p.getResource());
-//        	System.out.println(p.getSource());
-//        }
-        
-        
-    	
         return SUCCESS;
     }
     
     
+    public void setEntry(SearchEntry s) {
+    	this.entry = s;
+    }
+    
+    public SearchEntry getEntry() {
+    	return this.entry;
+    }
+    
     public List<Product> getProductList() {
-    	
     	if(productList.size() == 0)
-    		return productList;
-    	
+    		return productList; 	
     	return  
-    		 productList.subList(currentPage*50, 
+    		 productList.subList(currentPage * 50, 
 			 ((currentPage + 1) * 50 < productList.size()) ? 
 					(currentPage+1) * 50 : productList.size() - 1);
     }
-
-    
+  
     public void setProductList(ArrayList<Product> productList) {
     	this.productList = productList;
     }
-    
     
 }
