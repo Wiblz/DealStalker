@@ -23,6 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
@@ -38,12 +44,15 @@ import java.sql.Statement;
  * 
  */
 @Conversion()
-public class IndexAction extends ActionSupport {
+public class IndexAction extends ActionSupport implements SessionAware{
+	
 	
 	
 	private ArrayList<Product> productList; 
 	public Integer currentPage = 0;
 	public Integer productPerPage = 50;
+	
+	private Map<String, Object> userSession;
 	
 	public SearchEntry entry;
 	public List<String> categories =  Arrays.asList("Clothing","Shoes","Accessories");
@@ -62,57 +71,27 @@ public class IndexAction extends ActionSupport {
 	public List<String> subCategories = new ArrayList<String>();
 	
 	
-    public String execute() throws Exception {        
-
+    public String execute() throws Exception {  
         return SUCCESS;
     }
     
-    public String search() throws Exception {        
+    public String search() throws Exception {      
         Connection cnx = DriverLoader.getMySqlConnection();
         Statement stmt = null;
         String query = "Select * from Products LIMIT 10000;";
         
-        productList = new ArrayList<Product>();
         
-        try {
-        	    stmt =  cnx.createStatement(
-        	                           ResultSet.TYPE_FORWARD_ONLY,
-        	                           ResultSet.CONCUR_READ_ONLY);
-        	    
-        	    ResultSet rs =  stmt.executeQuery(query);
-        	    Product tempProduct = null;
-                
-        	    while (rs.next()) {
-        	    	tempProduct = new Product();
-        	    	tempProduct.setId((rs.getInt("id")));
-        	    	tempProduct.setBrandName(rs.getString("Brand"));
-        	    	tempProduct.setPrimaryCategory((rs.getString("PrimaryCategory")));
-        	    	tempProduct.setSubCategory(rs.getString("SubCategory"));
-        	    	tempProduct.setModelName(rs.getString("ModelName"));
-        	    	tempProduct.setPrice(rs.getFloat("Price"));
-        	    	tempProduct.setPriceCurrency(rs.getString("PriceCurrency"));
-        	    	tempProduct.setDescription(rs.getString("Description"));
-        	    	tempProduct.setSource(rs.getString("SourceUrl"));
-        	    	tempProduct.setResource(rs.getString("ResourceUrl"));
-        	    	tempProduct.setIsDiscounted(rs.getInt("isDiscounted"));
-        	    	tempProduct.setImageUrl(rs.getString("ImageUrl"));
-        	    	productList.add(tempProduct);
-                }
-        	 
-        	}
-        	catch(Exception ex) {
-        		System.out.println("Handle me please, I am Mysql exception");
-        	}
-        	finally {		
-        		  if (stmt != null) {  stmt.close(); }
-        		  cnx.close();
-        	}
+        SearchEntry entr = (SearchEntry) userSession.get("entry");
+        
+        productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));
+        
         return SUCCESS;
     }
     
     
     public void setEntry(SearchEntry s) {
     	this.entry = s;
+    	userSession.put("entry", entry);
     }
     
     public SearchEntry getEntry() {
@@ -128,8 +107,14 @@ public class IndexAction extends ActionSupport {
 					(currentPage+1) * 50 : productList.size() - 1);
     }
   
+    
     public void setProductList(ArrayList<Product> productList) {
     	this.productList = productList;
     }
+
+	@Override
+	public void setSession(Map<String, Object> session) {
+		userSession = session;
+	}
     
 }
