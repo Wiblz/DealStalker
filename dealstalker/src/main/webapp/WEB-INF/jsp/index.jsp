@@ -18,7 +18,7 @@
 			<div style="display: flex; flex-direction: column; text-align: center; padding-top: 50px;">
 		    <div>
 		    	<s:form action="searchItems" >
-			        <s:textfield style="display: inline-block; margin: 0 auto; border-radius: 20px; margin-top: 10px; width: 600px; height: 30px; margin-bottom: 20px; text-align: center; font-size: 20px; color: black;" placeholder="Search" type="text" name="searchString" label="Search" />
+			        <s:textfield style="display: inline-block; margin: 0 auto; border-radius: 20px; margin-top: 10px; width: 600px; height: 30px; margin-bottom: 20px; text-align: center; font-size: 20px; color: black;" placeholder="Search" type="text" name="entry.searchQuery" label="Search" />
 		        	<s:radio key="entry.gender" list="genders" />
 		     		<s:checkboxlist key="entry.aSubCategory" list="aCat" />
 		     		<s:checkboxlist key="entry.bSubCategory" list="bCat" />

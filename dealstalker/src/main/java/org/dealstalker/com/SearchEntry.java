@@ -1,14 +1,17 @@
 package org.dealstalker.com;
 
+import java.util.List;
+
 public class SearchEntry {
 	private String searchQuery = "";
 	private String gender = "";
 	private String category = "";
 	private String color = "";
-	private String subCategory="";
-	private String aSubCategory="";  
-	private String bSubCategory="";
-	private String cSubCategory="";
+	private String subCategory;
+	private List<String> aSubCategory;  
+	private List<String> bSubCategory;
+	private List<String> cSubCategory;
+	
 	public String getSearchQuery() {
 		return searchQuery;
 	}
@@ -39,22 +42,22 @@ public class SearchEntry {
 	public void setSubCategory(String subCategory) {
 		this.subCategory = subCategory;
 	}
-	public String getaSubCategory() {
+	public List<String> getaSubCategory() {
 		return aSubCategory;
 	}
-	public void setaSubCategory(String aSubCategory) {
+	public void setaSubCategory(List<String> aSubCategory) {
 		this.aSubCategory = aSubCategory;
 	}
-	public String getbSubCategory() {
+	public List<String> getbSubCategory() {
 		return bSubCategory;
 	}
-	public void setbSubCategory(String bSubCategory) {
+	public void setbSubCategory(List<String> bSubCategory) {
 		this.bSubCategory = bSubCategory;
 	}
-	public String getcSubCategory() {
+	public List<String> getcSubCategory() {
 		return cSubCategory;
 	}
-	public void setcSubCategory(String cSubCategory) {
+	public void setcSubCategory(List<String> cSubCategory) {
 		this.cSubCategory = cSubCategory;
 	}
 }
