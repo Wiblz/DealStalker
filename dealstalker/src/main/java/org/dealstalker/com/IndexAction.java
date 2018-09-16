@@ -58,13 +58,13 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	public List<String> categories =  Arrays.asList("Clothing","Shoes","Accessories");
 	public List<String> genders = Arrays.asList("Male","Female","Doesn`t matter, I am not a sexist!!");
 	
-	public List<String> aCat = Arrays.asList( "Activewear" ,
+	public List<String> cCat = Arrays.asList( "Activewear" ,
 			"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
 			"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff");
 	
 	public List<String> bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
 	
-	public List<String> cCat = Arrays.asList("Wallets & Purses","Socks" ,"Begs" ,
+	public List<String> aCat = Arrays.asList("Wallets & Purses","Socks" ,"Begs" ,
 			"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
 			"Gloves and Scarfs","Underwear" ,"Not really useful stuff");
 	
@@ -72,6 +72,7 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	
 	
     public String execute() throws Exception {  
+    	userSession.put("page", currentPage);
         return SUCCESS;
     }
     
@@ -82,15 +83,41 @@ public class IndexAction extends ActionSupport implements SessionAware{
         
         
         SearchEntry entr = (SearchEntry) userSession.get("entry");
-        
         productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));
         
+        userSession.put("list", productList);
+        
+        return SUCCESS;
+    }
+    
+    public String nextPage() throws Exception {  
+    	productList = ((ArrayList<Product>) userSession.get("list"));
+    	if(productList.size() != 0) {
+    		currentPage = (int)userSession.get("page");
+            if((currentPage+1)*50 >= productList.size())
+            	return SUCCESS;	
+            currentPage++;
+    		userSession.put("page", currentPage);
+    	}
+    	
+    	System.out.println(currentPage);
+    	return SUCCESS;
+    }
+    
+    public String prevPage() throws Exception {
+    	productList = (ArrayList<Product>) userSession.get("list");
+    	currentPage = (int)userSession.get("page");
+    	if(currentPage == 0)
+    		return SUCCESS;
+    	currentPage--;
+    	userSession.put("page", currentPage);
         return SUCCESS;
     }
     
     
     public void setEntry(SearchEntry s) {
     	this.entry = s;
+    	System.out.println("I love coockies");
     	userSession.put("entry", entry);
     }
     
@@ -106,7 +133,6 @@ public class IndexAction extends ActionSupport implements SessionAware{
 			 ((currentPage + 1) * 50 < productList.size()) ? 
 					(currentPage+1) * 50 : productList.size() - 1);
     }
-  
     
     public void setProductList(ArrayList<Product> productList) {
     	this.productList = productList;
