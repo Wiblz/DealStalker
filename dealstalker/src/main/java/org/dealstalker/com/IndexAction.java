@@ -56,22 +56,17 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	
 	public SearchEntry entry;
 	public List<String> categories =  Arrays.asList("Clothing","Shoes","Accessories");
-	public List<String> genders = Arrays.asList("Male","Female","Doesn`t matter, I am not a sexist!!");
+	public List<String> genders = Arrays.asList("Male","Female","Doesn`t matter!");
 	
-	public List<String> aCat = Arrays.asList( "Activewear" ,
-			"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
-			"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff");
-	
-	public List<String> bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
-	
-	public List<String> cCat = Arrays.asList("Wallets & Purses","Socks" ,"Begs" ,
-			"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
-			"Gloves and Scarfs","Underwear" ,"Not really useful stuff");
+	public List<String> cCat = Arrays.asList();
+	public List<String> bCat = Arrays.asList();	
+	public List<String> aCat = Arrays.asList();
 	
 	public List<String> subCategories = new ArrayList<String>();
 	
 	
     public String execute() throws Exception {  
+    	userSession.put("page", currentPage);
         return SUCCESS;
     }
     
@@ -82,15 +77,44 @@ public class IndexAction extends ActionSupport implements SessionAware{
         
         
         SearchEntry entr = (SearchEntry) userSession.get("entry");
-        
         productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));
         
+        userSession.put("list", productList);
+        setCategories(entry);
+
+        
+        return SUCCESS;
+    }
+    
+    public String nextPage() throws Exception {  
+    	productList = ((ArrayList<Product>) userSession.get("list"));
+    	if(productList.size() != 0) {
+    		currentPage = (int)userSession.get("page");
+            if((currentPage+1)*50 >= productList.size())
+            	return SUCCESS;	
+            currentPage++;
+    		userSession.put("page", currentPage);
+    	}
+    	
+    	System.out.println(currentPage);
+    	return SUCCESS;
+    }
+    
+    public String prevPage() throws Exception {
+    	productList = (ArrayList<Product>) userSession.get("list");
+    	currentPage = (int)userSession.get("page");
+    	if(currentPage == 0)
+    		return SUCCESS;
+    	currentPage--;
+    	userSession.put("page", currentPage);
         return SUCCESS;
     }
     
     
     public void setEntry(SearchEntry s) {
     	this.entry = s;
+    	if(entry.getGender().equals("w"))
+    		appendToWomenCat();
     	userSession.put("entry", entry);
     }
     
@@ -106,7 +130,6 @@ public class IndexAction extends ActionSupport implements SessionAware{
 			 ((currentPage + 1) * 50 < productList.size()) ? 
 					(currentPage+1) * 50 : productList.size() - 1);
     }
-  
     
     public void setProductList(ArrayList<Product> productList) {
     	this.productList = productList;
@@ -116,5 +139,46 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
 	}
+	
+	public void setCategories(SearchEntry entry) {
+		if(entry.getGender().equals("Female")) {
+			cCat = Arrays.asList( "Activewear" ,
+					"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
+					"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff","Lingerie & Nightwear & Kimonos",
+					"Loungewear","Skirts","Tops","Swimming wear");
+			
+			 bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
+			
+			 aCat = Arrays.asList("Wallets & Purses","Socks & Tights" ,"Bags" ,
+						"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
+						"Gloves and Scarfs","Underwear" ,"Not really useful stuff", "Bra","Hair accessories");
+		}
+		else {
+			cCat = Arrays.asList( "Activewear" ,
+					"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
+					"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff");
+			
+			 bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
+			
+			 aCat = Arrays.asList("Wallets & Purses","Socks" ,"Bags" ,
+						"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
+						"Gloves and Scarfs","Underwear" ,"Not really useful stuff");
+		}
+	}
     
+	
+	public void appendToWomenCat() {
+		for(String s: entry.getaSubCategory()) {
+			StringBuilder b = new StringBuilder(s);
+			s = b.append(" [W]").toString();
+		}
+		for(String s: entry.getbSubCategory()) {
+			StringBuilder b = new StringBuilder(s);
+			s = b.append(" [W]").toString();
+		}
+		for(String s: entry.getcSubCategory()) {
+			StringBuilder b = new StringBuilder(s);
+			s = b.append(" [W]").toString();
+		}
+	}
 }

@@ -37,6 +37,13 @@
             <result name="success">/WEB-INF/jsp/index.jsp</result>
         </action>
         
+        <action name="next" method="nextPage" class="org.dealstalker.com.IndexAction">
+            <result name="success">/WEB-INF/jsp/index.jsp</result>
+        </action>
+        
+        <action name="prev" method="prevPage" class="org.dealstalker.com.IndexAction">
+            <result name="success">/WEB-INF/jsp/index.jsp</result>
+        </action>
 
     </package>
 

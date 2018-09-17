@@ -64,6 +64,15 @@
 				</div>
 			</s:iterator>
 		    </div>
+		    
+		    <div>
+		    	<s:form action="next" >
+		    		<s:submit value="Next" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
+		    	</s:form>
+		        <s:form action="prev" >
+		            <s:submit value="Previous" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
+		    	</s:form>
+		    </div>
 	</div>
 </body>
 </html>
