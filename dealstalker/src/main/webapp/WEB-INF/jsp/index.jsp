@@ -14,6 +14,19 @@
 </head>
 <body>
 	<div class="container" style="background-image: url('./backgrounds/background.jpg');">
+		<c:choose>
+    		<c:when test="${session.login != null}">
+    			<div>
+    				<s:property value="session.login" />
+    			</div>
+    		</c:when>    
+    		
+    		<c:otherwise>
+    			<div>
+    				<span> Hello, dear guest. </span>
+    			</div>
+    		</c:otherwise>
+		</c:choose>
 		<div class="row">
 			<div style="display: flex; flex-direction: column; text-align: center; padding-top: 50px;">
 		    <div>
