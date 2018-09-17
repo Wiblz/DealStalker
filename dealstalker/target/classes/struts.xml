@@ -15,21 +15,26 @@
             <result>/WEB-INF/jsp/index.jsp</result>
         </action>
         
-        <action name="startRegister" class="org.dealstalker.com.StartRegister" method="execute">
- 			<result name="success">/WEB-INF/jsp/register.jsp</result>
+        <action name="startRegister">
+ 			<result>/WEB-INF/jsp/register.jsp</result>
         </action>
         
-        <action name="register" class="org.dealstalker.com.Register" method="execute">
+        <action name="register" class="org.dealstalker.com.RegisterAction" method="execute">
  			<result name="success">/WEB-INF/jsp/thankyou.jsp</result>
  			<result name="input">/WEB-INF/jsp/register.jsp</result>
         </action>
         
-        <action name="startSignin" class="org.dealstalker.com.StartSignin" method="execute">
-            <result name="success">/WEB-INF/jsp/signin.jsp</result>
+        <action name="startSignin">
+            <result>/WEB-INF/jsp/signin.jsp</result>
         </action>
         
-        <action name="searchItems" class="org.dealstalker.com.SearchEngine" method="execute">
-            <result name="success">/WEB-INF/jsp/searchResults.jsp</result>
+        <action name="login" class="org.dealstalker.com.LoginAction" method="execute">
+        	<result type="redirectAction" name="success">index.action</result>
+        	<result name="error">/WEB-INF/jsp/loginfailed.jsp</result>
+        </action>
+        
+        <action name="searchItems" method="search" class="org.dealstalker.com.IndexAction">
+            <result name="success">/WEB-INF/jsp/index.jsp</result>
         </action>
         
 

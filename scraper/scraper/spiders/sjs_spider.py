@@ -1,5 +1,4 @@
 import datetime
-from urllib.parse import urlparse
 
 import scrapy
 from scrapy import Request
@@ -8,14 +7,21 @@ from scrapy.loader.processors import MapCompose
 from scrapy.spiders import Rule
 from scrapy.linkextractors import LinkExtractor
 
+from scraper.category_resolvers import SJSResolver
 from scraper.items import ScraperItem
 
 
 class SJSSpider(scrapy.spiders.CrawlSpider):
+    def __init__(self):
+        super().__init__()
+        self.category_resolver = SJSResolver()
+
     name = "SJS"
     alowed_domains = ["slamjamsocialism"]
     start_urls = (
-        "https://www.slamjamsocialism.com/clothing/",
+        'https://www.slamjamsocialism.com/clothing/',
+        'https://www.slamjamsocialism.com/shoes/',
+        'https://www.slamjamsocialism.com/accessories/'
     )
 
     rules = (
@@ -23,6 +29,7 @@ class SJSSpider(scrapy.spiders.CrawlSpider):
         Rule(LinkExtractor(restrict_xpaths='//*[@class="right-block"]'), callback='parse_item')
     )
 
+    # TODO: How does this code works with sold out items?
     def parse_item(self, response):
         item_loader = ItemLoader(item=ScraperItem(), response=response)
 
@@ -52,6 +59,14 @@ class SJSSpider(scrapy.spiders.CrawlSpider):
         is_discounted = len(response.xpath('//*[contains(@class, "price_reduced")]').extract()) != 0
         item_loader.add_value('is_discounted', is_discounted)
 
+        inner_id = response.xpath('//*[@name="id_product"]/@value').extract_first()
+        item_loader.add_value('inner_id', inner_id)
+
+        inner_category = response.xpath('//*[@itemtype="http://data-vocabulary.org/Breadcrumb"][last()-1]/a[1]/@title').extract_first()
+        item_loader.add_value('db_category', self.category_resolver.resolve(inner_category, inner_id))
+
+        # SJS has only clothing for men
+        item_loader.add_value('gender', 'm')
         item_loader.add_value('resource', 'slamjamsocialism')
         item_loader.add_value('url', response.url)
         item_loader.add_value('date', str(datetime.datetime.now()))

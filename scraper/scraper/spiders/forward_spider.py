@@ -4,6 +4,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose
 
+from scraper.category_resolvers import ForwardResolver
 from scraper.items import ScraperItem
 
 
@@ -11,13 +12,26 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
     name = "forward"
     alowed_domains = ["fwrd"]
 
+    custom_settings = {'COOKIES_ENABLED': 'True'}
+
     def __init__(self):
         super().__init__()
         self.pages_available = None
         self.current_url_base = None
+        self.category_resolver = ForwardResolver()
 
     def start_requests(self):
-        urls = ['https://www.fwrd.com/mens-category-clothing/15d48b/?navsrc=main']
+        urls = [
+            'https://www.fwrd.com/mens-category-clothing/15d48b/?navsrc=main',
+            'https://www.fwrd.com/mens-category-shoes/b05f2e/?navsrc=main',
+            'https://www.fwrd.com/mens-category-bags/6c97c1/?navsrc=main',
+            'https://www.fwrd.com/mens-category-accessories/8ad9de/?navsrc=main',
+
+            'https://www.fwrd.com/category-clothing/3699fc/?navsrc=main',
+            'https://www.fwrd.com/category-shoes/3f40a9/?navsrc=main',
+            'https://www.fwrd.com/category-bags/2df9df/?navsrc=main',
+            'https://www.fwrd.com/category-accessories/2fa629/?navsrc=main'
+        ]
         for url in urls:
             self.current_url_base = url
             yield scrapy.Request(url=url, callback=self.parse, meta={
@@ -59,9 +73,10 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         else:
             item_loader.add_value('is_discounted', False)
             price = response.xpath('//*[@id="tr-pdp-price"]/span[1]/text()').extract_first()
-        # removing 'US$' at the beginning of price string and casting to float
+
+        # removing '$' at the beginning of price string and casting to float
         item_loader.add_value('price', price,
-                              MapCompose(lambda i: i[3:].replace(',', ''), float))
+                              MapCompose(lambda i: ''.join(ch for ch in i if ch.isdigit()), float))
 
         # Supposedly currency of all 'forward' items will be in dollars as we asked so in cookies
         item_loader.add_value('price_currency', 'USD')
@@ -88,11 +103,14 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         if gender == "MENS":
             item_loader.add_value('gender', 'm')
         else:
-            item_loader.add_value('gender', 'f')
+            item_loader.add_value('gender', 'w')
 
         inner_id = response.xpath('//*[@class="product_detail"]/ul[1]/li[last()]/text()').extract_first()
         inner_id = inner_id.replace('Manufacturer Style No. ', '')
         item_loader.add_value('inner_id', inner_id)
+
+        inner_categories = list(map(str.strip, response.xpath('//*[@id="ctaMainBtn"]/button[1]/@data-category').extract_first().split(':')))
+        item_loader.add_value('db_category', self.category_resolver.resolve(inner_categories, inner_id, gender))
 
         item_loader.add_value('resource', "forward")
         item_loader.add_value('url', response.url)

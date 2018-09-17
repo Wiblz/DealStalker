@@ -20,8 +20,15 @@ import com.opensymphony.xwork2.ActionSupport;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.interceptor.SessionAware;
 
 import com.opensymphony.xwork2.conversion.annotations.Conversion;
 import com.opensymphony.xwork2.conversion.annotations.TypeConversion;
@@ -37,85 +44,124 @@ import java.sql.Statement;
  * 
  */
 @Conversion()
-public class IndexAction extends ActionSupport {
+public class IndexAction extends ActionSupport implements SessionAware{
+	
 	
 	
 	private ArrayList<Product> productList; 
 	public Integer currentPage = 0;
 	public Integer productPerPage = 50;
 	
-    public String execute() throws Exception {
-        Connection cnx = DriverLoader.getConnection();
-        Statement stmt = null;
-        String query = "Select * from Products;";
-        
-        productList = new ArrayList<Product>();
-        
-        try {
-        	    stmt =  cnx.createStatement(
-        	                           ResultSet.TYPE_FORWARD_ONLY,
-        	                           ResultSet.CONCUR_READ_ONLY);
-        	    
-        	    ResultSet rs =  stmt.executeQuery(query);
-        	    Product tempProduct = null;
-                
-        	    while (rs.next()) {
-        	    	tempProduct = new Product();
-        	    	tempProduct.setId((rs.getInt("id")));
-        	    	tempProduct.setBrandName(rs.getString("Brand"));
-        	    	tempProduct.setPrimaryCategory((rs.getString("PrimaryCategory")));
-        	    	tempProduct.setSubCategory(rs.getString("SubCategory"));
-        	    	tempProduct.setModelName(rs.getString("ModelName"));
-        	    	tempProduct.setPrice(rs.getFloat("Price"));
-        	    	tempProduct.setPriceCurrency(rs.getString("PriceCurrency"));
-        	    	tempProduct.setDescription(rs.getString("Description"));
-        	    	tempProduct.setSource(rs.getString("SourceUrl"));
-        	    	tempProduct.setResource(rs.getString("ResourceUrl"));
-        	    	tempProduct.setIsDiscounted(rs.getInt("isDiscounted"));
-        	    	tempProduct.setImageUrl(rs.getString("ImageUrl"));
-        	    	productList.add(tempProduct);
-                }
-        	 
-        	}
-        	catch(Exception ex) {
-        		System.out.println("Handle me please, I am Mysql exception");
-        	}
-        	finally {		
-        		  if (stmt != null) {  stmt.close(); }
-        		  cnx.close();
-        	}
-// May be used for debug
-        
-//        for(Product p :productList) {
-//        	System.out.println(p.getImageUrl());
-//        	System.out.println(p.getBrandName());
-//        	System.out.println(p.getDescription());
-//        	System.out.println(p.getModelName());
-//        	System.out.println(p.getResource());
-//        	System.out.println(p.getSource());
-//        }
-        
-        
-    	
+	private Map<String, Object> userSession;
+	
+	public SearchEntry entry;
+	public List<String> categories =  Arrays.asList("Clothing","Shoes","Accessories");
+	public List<String> genders = Arrays.asList("Male","Female","Doesn`t matter!");
+	
+	public List<String> cCat = Arrays.asList();
+	public List<String> bCat = Arrays.asList();	
+	public List<String> aCat = Arrays.asList();
+	public List<String> brands = Arrays.asList();
+	
+	public List<String> subCategories = new ArrayList<String>();
+	
+	
+    public String execute() throws Exception {  
+    	brands = SearchEngine.getBrands();
+    	userSession.put("page", currentPage);
+    	userSession.put("brands", brands);
         return SUCCESS;
     }
     
+    public String search() throws Exception {              
+        productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));
+        
+        userSession.put("list", productList);
+        brands = (List<String>) userSession.get("brands");
+        setCategories(entry);
+
+        
+        return SUCCESS;
+    }
+    
+    public String nextPage() throws Exception {  
+    	productList = ((ArrayList<Product>) userSession.get("list"));
+    	if(productList.size() != 0) {
+    		currentPage = (int)userSession.get("page");
+            if((currentPage+1)*50 >= productList.size())
+            	return SUCCESS;	
+            currentPage++;
+    		userSession.put("page", currentPage);
+    	}
+    	
+    	brands = (List<String>) userSession.get("brands");
+    	return SUCCESS;
+    }
+    
+    public String prevPage() throws Exception {
+    	productList = (ArrayList<Product>) userSession.get("list");
+    	currentPage = (int)userSession.get("page");
+    	if(currentPage == 0)
+    		return SUCCESS;
+    	currentPage--;
+    	userSession.put("page", currentPage);
+    	brands = (List<String>) userSession.get("brands");
+        return SUCCESS;
+    }
+     
+    public void setEntry(SearchEntry s) {
+    	this.entry = s;
+    	userSession.put("entry", entry);
+    }
+    
+    public SearchEntry getEntry() {
+    	return this.entry;
+    }
     
     public List<Product> getProductList() {
-    	
     	if(productList.size() == 0)
-    		return productList;
-    	
+    		return productList; 	
     	return  
-    		 productList.subList(currentPage*50, 
+    		 productList.subList(currentPage * 50, 
 			 ((currentPage + 1) * 50 < productList.size()) ? 
 					(currentPage+1) * 50 : productList.size() - 1);
     }
-
     
     public void setProductList(ArrayList<Product> productList) {
     	this.productList = productList;
     }
+
+	@Override
+	public void setSession(Map<String, Object> session) {
+		userSession = session;
+	}
+	
+	public void setCategories(SearchEntry entry) {
+		if(entry.getGender().equals("Female")) {
+			cCat = Arrays.asList( "Activewear" ,
+					"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
+					"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff","Lingerie & Nightwear & Kimonos",
+					"Loungewear","Skirts","Tops","Swimming wear");
+			
+			 bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
+			
+			 aCat = Arrays.asList("Wallets & Purses","Socks & Tights" ,"Bags" ,
+						"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
+						"Gloves and Scarfs","Underwear" ,"Not really useful stuff", "Bra","Hair accessories");
+		}
+		else {
+			cCat = Arrays.asList( "Activewear" ,
+					"Jackets & Coats" ,"Hoodies & Sweatshirts" ,"Jeans & Trousers" ,
+					"Shirts" ,"T-shirts" ,"Shorts" ,"Loungewear","Swimming stuff");
+			
+			 bCat = Arrays.asList("Boots", "Shoes","Sanadals, Sliders & Flip Flpos" ,"Sneakers & Trainers");
+			
+			 aCat = Arrays.asList("Wallets & Purses","Socks" ,"Bags" ,
+						"Belts & Braces" ,"Hats & Caps" ,"Ties" ,"Glasses"  ,
+						"Gloves and Scarfs","Underwear" ,"Not really useful stuff");
+		}
+	}
     
-    
+	
+
 }

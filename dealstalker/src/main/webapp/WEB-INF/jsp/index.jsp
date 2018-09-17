@@ -12,14 +12,32 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<s:head />
 </head>
-<body style="background-image: url(./backgrounds/background.jpg);">
-	<div class="container">
+<body>
+	<div class="container" style="background-image: url('./backgrounds/background.jpg');">
+		<c:choose>
+    		<c:when test="${session.login != null}">
+    			<div>
+    				<s:property value="#session.login" />
+    			</div>
+    		</c:when>    
+    		
+    		<c:otherwise>
+    			<div>
+    				<span> Hello, dear guest. </span>
+    			</div>
+    		</c:otherwise>
+		</c:choose>
 		<div class="row">
 			<div style="display: flex; flex-direction: column; text-align: center; padding-top: 50px;">
 		    <div>
-		    	<s:form action="searchItems" style="display: flex; justify-content: space-around; margin: 0 auto; width: 50%; height: 54px; margin-bottom: 50px;">
-			        <s:textfield style="border-radius: 20px; margin-top: 10px; width: 70%; height: 30px; text-align: center; font-size: 20px; color: black;" placeholder="Search" type="text" name="searchString" label="Search" />
-		        	<s:submit/>
+		    	<s:form action="searchItems" >
+			        <s:textfield style="display: inline-block; margin: 0 auto; border-radius: 20px; margin-top: 10px; width: 600px; height: 30px; margin-bottom: 20px; text-align: center; font-size: 20px; color: black;" placeholder="Search" type="text" name="entry.searchQuery" label="Search" />
+		        	<s:radio key="entry.gender" list="genders" />
+		     		<s:checkboxlist key="entry.aSubCategory" list="aCat" />
+		     		<s:checkboxlist key="entry.bSubCategory" list="bCat" />
+		     	    <s:checkboxlist key="entry.cSubCategory" list="cCat" />
+		     	    <s:select key="entry.brand" list="brands" />
+		        	<s:submit value="Search" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
 		        </s:form>
 		    </div>
 
@@ -32,25 +50,31 @@
 				 </div>
 		    </div>
 
-
-				<div style="width: 80%; margin: 0 auto; margin-top: 50px;">
-			    <s:iterator value="productList">
-					<div style="display: flex; flex-direction: row; justify-content: space-around;">
-						<div style="width: 30%; display: flex; flex-direction: row; justify-content: space-around;">
-				    	<div style="width: 200px; height: 200px;">
-				      		<img style="width: 100%; border: 2px solid #e5e5e5; border-radius: 10px;" src="<s:property value="imageUrl"/>" alt="image" >
-				      </div>
-				      <div style="display: flex; flex-direction: column; justify-content: space-around;">
-                <p style="font-size: 16px; font-weight: bold;"><s:property value="modelName"/></p>
-				      	<p style="font-size: 16px; font-weight: bold;"><s:property value="price"/></p>
-				      	<p style="font-size: 16px; font-weight: bold;"><s:property value="priceCurrency"/></p>
-				      </div>
-						</div>
-				 	</div>
-				</s:iterator>
-		    </div>
-			</div>
 		</div>
+		</div>
+			<div style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: space-around; width: 100%; margin: 0 auto; margin-top: 50px;">
+	        <s:iterator value="productList">
+				<div style="width: 30%; display: flex; flex-direction: row; justify-content: space-around; margin-top: 15px; margin-bottom: 15px;">
+		    	<div style="margin-right: 30px;">
+		      		<img style="width: 200px; height: 300px; border: 2px solid #e5e5e5; border-radius: 10px;" src="<s:property value="imageUrl"/>" alt="image" >
+		      </div>
+		      <div style="display: flex; flex-direction: column; justify-content: space-around;">
+              <p style="font-size: 16px; font-weight: bold;"><s:property value="modelName"/></p>
+		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="price"/></p>
+		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="priceCurrency"/></p>
+		      </div>
+				</div>
+			</s:iterator>
+		    </div>
+		    
+		    <div>
+		    	<s:form action="next" >
+		    		<s:submit value="Next" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
+		    	</s:form>
+		        <s:form action="prev" >
+		            <s:submit value="Previous" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
+		    	</s:form>
+		    </div>
 	</div>
 </body>
 </html>

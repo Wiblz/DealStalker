@@ -1,4 +1,15 @@
 import scrapy
+import re
+import datetime
+
+from scrapy.loader import ItemLoader
+from scrapy.loader.processors import MapCompose
+
+from scraper.category_resolvers import ForwardResolver
+from scraper.items import ScraperItem
+
+from scrapy.selector import Selector
+from scrapy.http import HtmlResponse
 
 class AsosSpider(scrapy.Spider):
     name = "asos"
@@ -27,10 +38,44 @@ class AsosSpider(scrapy.Spider):
     
     #parsing product entries logic
     def parseProductAsos(self, response):
-        #open('testfile', 'w').close()
-        file = open("testfile", "a+")
-        for product in response.css("div.product-hero h1"):
+        item_loader = ItemLoader(item=ScraperItem(), response=response)
+
+        for product in response.css("div.product-hero h1::text"):
             self.log(product.extract())
-            file.write(product.extract())
-            file.write("\n")
-        file.close()
+
+        brand = response.css("div.brand-description a::text").extract_first()
+        inner_id = response.css("div.product-code h4::text").extract_first()
+        #price = response.css("span.price::text").extract_first()
+
+        model = response.css("div.product-hero h1::text").extract_first()
+        image = response.css("div.product-gallery-static img::attr(src)").extract_first()
+
+        description = ''
+        for desc in response.css("div.product-description li::text"):
+            description += desc.extract()
+            description += ', '
+        
+        is_discounted = False
+        gender = 'u'
+        pricef = '75.0'
+        db_category = ''
+        color = ''
+        price_currency = "GBP"
+
+
+        item_loader.add_value('gender', gender)
+        item_loader.add_value('is_discounted', is_discounted)
+        item_loader.add_value('description', description)
+        item_loader.add_value('model',model)       
+        item_loader.add_value('price',pricef)
+        item_loader.add_value('brand', brand)
+        item_loader.add_value('db_category',db_category)
+        item_loader.add_value('inner_id', inner_id)
+        item_loader.add_value('color',color)
+
+        item_loader.add_value('resource', "asos")
+        item_loader.add_value('url', response.url)
+        item_loader.add_value('date', str(datetime.datetime.now()))
+
+        return item_loader.load_item()
+

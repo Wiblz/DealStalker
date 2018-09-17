@@ -4,21 +4,36 @@ import json
 import scrapy
 from scrapy.loader import ItemLoader
 
+from scraper.category_resolvers import FarfetchResolver
 from scraper.items import ScraperItem
+
+import urllib.parse as urlparse
 
 
 class FarfetchSpider(scrapy.spiders.CrawlSpider):
-    name = "farfetch"
-    alowed_domains = ["farfetch"]
+    name = 'farfetch'
+    alowed_domains = ['farfetch']
+
+    custom_settings = {'COOKIES_ENABLED': 'True'}
 
     def __init__(self):
         super().__init__()
         self.pages_available = None
         self.current_url_base = None
+        self.category_resolver = FarfetchResolver()
 
     def start_requests(self):
-        # TODO: add every single category here and test how the loop works
-        urls = ['https://www.farfetch.com/shopping/men/clothing-2/items.aspx']
+        urls = [
+                'https://www.farfetch.com/shopping/men/clothing-2/items.aspx',
+                'https://www.farfetch.com/shopping/men/accessories-all-2/items.aspx',
+                'https://www.farfetch.com/shopping/men/shoes-2/items.aspx',
+                'https://www.farfetch.com/shopping/men/bags-purses-2/items.aspx',
+
+                'https://www.farfetch.com/shopping/women/clothing-1/items.aspx',
+                'https://www.farfetch.com/shopping/women/accessories-all-1/items.aspx',
+                'https://www.farfetch.com/shopping/women/shoes-1/items.aspx',
+                'https://www.farfetch.com/shopping/women/bags-purses-1/items.aspx'
+                ]
         for url in urls:
             self.current_url_base = url
             # Dodging annoying redirect using cookies and additional headers
@@ -47,6 +62,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
                                  dont_filter=True, meta={'page_number': next_page})
 
     def parse_item_json(self, response):
+
         item_properties = json.loads(response.body.decode('utf-8'))[0]
 
         item_loader = ItemLoader(item=ScraperItem(), response=response)
@@ -55,7 +71,6 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         # TODO: test how this code works with discounted, one-sized and out of stock items
         # TODO: test how this code works with more "exotic" categories and products
         # TODO: implement extracting of product category (both domain and DB specific)
-        # TODO: deal with possible item duplicates (perhaps by saving inner id's of products)
 
         item_loader.add_value('brand', item_properties['designerDetails']['name'])
         item_loader.add_value('price', item_properties['priceInfo']['default']['finalPrice'])
@@ -65,6 +80,16 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         item_loader.add_value('description', item_properties['designerDetails']['description'])
         item_loader.add_value('color', item_properties['designerDetails']['designerColour'])
         item_loader.add_value('is_discounted', item_properties['priceInfo']['default']['isOnSale'])
+        inner_id = item_properties['details']['productId']
+        item_loader.add_value('inner_id', inner_id)
+
+        category_data = urlparse.parse_qs(urlparse.urlparse(item_properties['sizeGuideUri']).query)
+        item_loader.add_value('db_category', self.category_resolver.resolve(category_data['CategoryIDs'], inner_id))
+        if category_data['Gender'][0] == 'Man':
+            item_loader.add_value('gender', 'm')
+        else:
+            item_loader.add_value('gender', 'w')
+
         available_sizes = []
         if item_properties['sizes']['isOneSize']:
             available_sizes.append('One Size')
