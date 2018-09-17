@@ -88,13 +88,36 @@ public class SearchEngine {
 	private static void appendGender(SearchEntry entry, StringBuilder query) {
 		String gender = "";
 		
-		if(entry.getGender().equals("Male"))
+		if(entry.getGender().equals("Male")) {
 			gender = "m";
-		if(entry.getGender().equals("Female"))
+		}
+		if(entry.getGender().equals("Female")) {
 			gender = "w";
+			
+			StringBuilder sb = new StringBuilder();
+			ArrayList<String> arr = new ArrayList<>();
+			for(String s: entry.getaSubCategory()) {
+				sb.append(s + " [W]");
+				arr.add(sb.toString());
+			}
+			entry.setaSubCategory(arr);
+			for(String s: entry.getbSubCategory()) {
+				arr = new ArrayList<>();
+				sb.append(s + " [W]");
+				arr.add(sb.toString());
+			}
+			entry.setbSubCategory(arr);
+			for(String s: entry.getcSubCategory()) {
+				arr = new ArrayList<>();
+				sb.append(s + " [W]");
+				arr.add(sb.toString());
+			}
+			entry.setcSubCategory(arr);
+		}
 		
-		if(!gender.equals(""))
+		if(!gender.equals("")) {
 			query.append("Gender = '"+ gender + "' AND");
+		}
 	}
 	
 	private static void appendSearchQuery(SearchEntry entry, StringBuilder query) {
