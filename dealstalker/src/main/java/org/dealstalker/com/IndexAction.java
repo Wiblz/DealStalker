@@ -61,25 +61,23 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	public List<String> cCat = Arrays.asList();
 	public List<String> bCat = Arrays.asList();	
 	public List<String> aCat = Arrays.asList();
+	public List<String> brands = Arrays.asList();
 	
 	public List<String> subCategories = new ArrayList<String>();
 	
 	
     public String execute() throws Exception {  
+    	brands = SearchEngine.getBrands();
     	userSession.put("page", currentPage);
+    	userSession.put("brands", brands);
         return SUCCESS;
     }
     
-    public String search() throws Exception {      
-        Connection cnx = DriverLoader.getMySqlConnection();
-        Statement stmt = null;
-        String query = "Select * from Products LIMIT 10000;";
-        
-        
-        SearchEntry entr = (SearchEntry) userSession.get("entry");
+    public String search() throws Exception {              
         productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));
         
         userSession.put("list", productList);
+        brands = (List<String>) userSession.get("brands");
         setCategories(entry);
 
         
@@ -96,7 +94,7 @@ public class IndexAction extends ActionSupport implements SessionAware{
     		userSession.put("page", currentPage);
     	}
     	
-    	System.out.println(currentPage);
+    	brands = (List<String>) userSession.get("brands");
     	return SUCCESS;
     }
     
@@ -107,14 +105,12 @@ public class IndexAction extends ActionSupport implements SessionAware{
     		return SUCCESS;
     	currentPage--;
     	userSession.put("page", currentPage);
+    	brands = (List<String>) userSession.get("brands");
         return SUCCESS;
     }
-    
-    
+     
     public void setEntry(SearchEntry s) {
     	this.entry = s;
-    	if(entry.getGender().equals("w"))
-    		appendToWomenCat();
     	userSession.put("entry", entry);
     }
     
@@ -167,18 +163,5 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	}
     
 	
-	public void appendToWomenCat() {
-		for(String s: entry.getaSubCategory()) {
-			StringBuilder b = new StringBuilder(s);
-			s = b.append(" [W]").toString();
-		}
-		for(String s: entry.getbSubCategory()) {
-			StringBuilder b = new StringBuilder(s);
-			s = b.append(" [W]").toString();
-		}
-		for(String s: entry.getcSubCategory()) {
-			StringBuilder b = new StringBuilder(s);
-			s = b.append(" [W]").toString();
-		}
-	}
+
 }

@@ -31,8 +31,8 @@ public class LoginAction extends ActionSupport implements SessionAware {
 	}  
 	  
 	public String execute() {
-	    if (LoginDAO.validate(login, password)){  
-	    	sessionmap.put("login", login); 
+	    if (LoginDAO.validate(login, password)) {
+		    sessionmap.put("login", login);
 	        return "success";  
 	    }  
 	    else {  

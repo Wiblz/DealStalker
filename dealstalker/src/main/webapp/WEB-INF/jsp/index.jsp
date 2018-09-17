@@ -32,6 +32,7 @@
 		     		<s:checkboxlist key="entry.aSubCategory" list="aCat" />
 		     		<s:checkboxlist key="entry.bSubCategory" list="bCat" />
 		     	    <s:checkboxlist key="entry.cSubCategory" list="cCat" />
+		     	    <s:select key="entry.brand" list="brands" />
 		        	<s:submit value="Search" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
 		        </s:form>
 		    </div>
