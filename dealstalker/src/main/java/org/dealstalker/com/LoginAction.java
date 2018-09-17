@@ -30,6 +30,7 @@ public class LoginAction implements SessionAware {
 	  
 	public String execute() {
 	    if (LoginDAO.validate(login, password)){  
+		    sessionmap.put("login", login);  
 	        return "success";  
 	    }  
 	    else {  

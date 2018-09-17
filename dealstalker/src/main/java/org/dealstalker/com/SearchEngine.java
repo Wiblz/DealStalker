@@ -75,6 +75,7 @@ public class SearchEngine {
 	public static String createQuery(SearchEntry entry) {
 		StringBuilder query = new StringBuilder("SELECT * FROM Products WHERE ");
 		
+		appendBrand(entry,query);
 		appendGender(entry,query);
 		appendSearchQuery(entry,query);
 		appendCategories(entry,query);
@@ -115,8 +116,13 @@ public class SearchEngine {
 			entry.setcSubCategory(arr);
 		}
 		
+		if(entry.getGender().equals("Doesn`t matter!")) {
+			query.append("(Gender = 'm' OR Gender = 'w' OR Gender='u')AND");
+			return;
+		}
+		
 		if(!gender.equals("")) {
-			query.append("Gender = '"+ gender + "' AND");
+			query.append("(Gender ='u' OR Gender = '"+ gender + "') AND");
 		}
 	}
 	
@@ -124,9 +130,9 @@ public class SearchEngine {
 		String[] str = entry.getSearchQuery().split("\\s+");
 		if(!entry.getSearchQuery().equals(""))
 			for(int i = 0; i< str.length; i++) {				
-				query.append(" (ModelName LIKE '" + str[i] +"' OR");
-				query.append(" Description LIKE '" + str[i] +"' OR");
-				query.append(" Brand LIKE '" + str[i] +"')  AND");
+				query.append(" (ModelName LIKE '%" + str[i] +"%' OR");
+				query.append(" Description LIKE '%" + str[i] +"%' OR");
+				query.append(" Brand LIKE '%" + str[i] +"%')  AND");
 			}
 	}
 	
@@ -176,7 +182,52 @@ public class SearchEngine {
 		if(!entry.getGender().equals(""))
 			return true;
 		
+		if(!entry.getBrand().equals("") && !entry.getBrand().equals("ALL BRANDS"))
+			return true;
+		
 		
 		return false;
+	}
+	
+	private static void appendBrand(SearchEntry entry, StringBuilder query) {
+		if(entry.getBrand().equals("") || entry.getBrand().equals("ALL BRANDS"))
+			return;
+		query.append("Brand='"+entry.getBrand()+"' AND");
+	}
+	
+	
+	public static ArrayList<String> getBrands() throws SQLException{
+		ArrayList<String> brands = new ArrayList<String>();
+		Connection cnx = DriverLoader.getMySqlConnection();
+        Statement stmt = null;
+        
+       
+        String queryWithParam = "SELECT Brand FROM Products LIMIT 10000";
+		try {
+    	    stmt =  cnx.createStatement(
+    	                           ResultSet.TYPE_FORWARD_ONLY,
+    	                           ResultSet.CONCUR_READ_ONLY);
+    	    
+    	    ResultSet rs =  stmt.executeQuery(queryWithParam);
+    	    brands.add("ALL BRANDS");
+    	    while (rs.next()) {
+    	    	if(!brands.contains(rs.getString("Brand"))) {
+    	    		brands.add(rs.getString("Brand"));
+    	    	}
+            }
+    	 
+    	}
+    	catch(Exception ex) {
+    		System.out.println("Handle me please, I am Mysql exception");
+    	}
+    	finally {		
+    		  if (stmt != null) {  stmt.close(); }
+    		  try {
+				cnx.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	}
+		return brands;
 	}
 }

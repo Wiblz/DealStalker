@@ -8,6 +8,7 @@ public class SearchEntry {
 	private String category = "";
 	private String color = "";
 	private String subCategory;
+	private String brand="";
 	private List<String> aSubCategory;  
 	private List<String> bSubCategory;
 	private List<String> cSubCategory;
@@ -59,5 +60,11 @@ public class SearchEntry {
 	}
 	public void setcSubCategory(List<String> cSubCategory) {
 		this.cSubCategory = cSubCategory;
+	}
+	public String getBrand() {
+		return brand;
+	}
+	public void setBrand(String brand) {
+		this.brand = brand;
 	}
 }
