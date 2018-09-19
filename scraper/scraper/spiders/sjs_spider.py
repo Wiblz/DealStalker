@@ -12,7 +12,7 @@ from scraper.items import ScraperItem
 
 
 class SJSSpider(scrapy.spiders.CrawlSpider):
-    def __init__(self):
+    def __init__(self, name=None, **kwargs):
         super().__init__()
         self.category_resolver = SJSResolver()
 
