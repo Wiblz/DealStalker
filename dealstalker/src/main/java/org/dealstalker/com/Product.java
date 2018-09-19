@@ -1,5 +1,9 @@
 package org.dealstalker.com;
 
+import java.sql.Date;
+import java.util.List;
+import java.util.Map;
+
 public class Product {
 	private Integer id;
 	private String imageUrl;
@@ -17,6 +21,8 @@ public class Product {
 	private Gender gender;
 	private String innerId;
 	private String color;
+	
+	private List<Map<Date,Float>> stats;
 	
 	
 	public enum Gender{
@@ -142,5 +148,13 @@ public class Product {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public List<Map<Date,Float>> getStats() {
+		return stats;
+	}
+
+	public void setStats(List<Map<Date,Float>> stats) {
+		this.stats = stats;
 	}
 }

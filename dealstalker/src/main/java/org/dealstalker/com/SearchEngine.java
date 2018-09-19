@@ -1,6 +1,7 @@
 package org.dealstalker.com;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -8,7 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
 import com.opensymphony.xwork2.ActionSupport;
 
 public class SearchEngine {
@@ -71,8 +79,7 @@ public class SearchEngine {
     
     return productList;
 	}
-	
-	
+		
 	public static String createQuery(SearchEntry entry) {
 		StringBuilder query = new StringBuilder("SELECT * FROM Products WHERE ");
 		
@@ -85,7 +92,6 @@ public class SearchEngine {
 		
 		return query.toString();
 	}
-	
 	
 	private static void appendGender(SearchEntry entry, StringBuilder query) {
 		String gender = "";
@@ -196,7 +202,6 @@ public class SearchEngine {
 		query.append("Brand='"+entry.getBrand()+"' AND");
 	}
 	
-	
 	public static ArrayList<String> getBrands() throws SQLException{
 		ArrayList<String> brands = new ArrayList<String>();
 		Connection cnx = DriverLoader.getMySqlConnection();
@@ -276,4 +281,29 @@ public class SearchEngine {
     	}
 		return tempProduct;
 	}
+	
+	public static List<Map<Date,Float>> getStats(String innerId,String color) {
+		List<Map<Date,Float>> stats = new ArrayList<>();
+		MongoClient mongoClient = DriverLoader.getMongoClient();
+		DB database = mongoClient.getDB("dealstalker");
+		DBCollection collection = database.getCollection("Products");
+		
+		DBObject query = new BasicDBObject();
+		query.put("inner_id", innerId);
+		query.put("color", color);
+		
+		
+		DBCursor results = collection.find(query);
+		
+		if(results.hasNext()) {
+		     Map<Date,Float> obj = (Map<Date, Float>) results.next();
+		     System.out.println(obj);
+		     System.out.println("\n\n\n\n");
+		     stats.add(obj);
+		}
+		
+		return stats;
+	}
+	
+	
 }
