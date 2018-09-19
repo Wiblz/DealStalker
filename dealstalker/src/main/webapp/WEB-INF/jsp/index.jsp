@@ -53,17 +53,21 @@
 		</div>
 		</div>
 			<div style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: space-around; width: 100%; margin: 0 auto; margin-top: 50px;">
-	        <s:iterator value="productList">
+	        <s:iterator var="entry" value="productList" status="st">
+	        <s:form action="itemInfo.action">
 				<div style="width: 30%; display: flex; flex-direction: row; justify-content: space-around; margin-top: 15px; margin-bottom: 15px;">
 		    	<div style="margin-right: 30px;">
-		      		<img style="width: 200px; height: 300px; border: 2px solid #e5e5e5; border-radius: 10px;" src="<s:property value="imageUrl"/>" alt="image" >
 		      </div>
 		      <div style="display: flex; flex-direction: column; justify-content: space-around;">
-              <p style="font-size: 16px; font-weight: bold;"><s:property value="modelName"/></p>
-		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="price"/></p>
-		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="priceCurrency"/></p>
+              <p style="font-size: 16px; font-weight: bold;"><s:property value="entry.modelName"/></p>
+		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="entry.price"/></p>
+		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="entry.priceCurrency"/></p>
+		      	<p style="font-size: 16px; font-weight: bold;"><s:property value="entry.id"/></p>
+		      	<s:hidden name="id" value="%{#entry.id}" />
+		      	<s:submit type="image" value="" name ="item" src="%{#entry.imageUrl}" style="width: 200px; height: 300px; border: 2px solid #e5e5e5; border-radius: 10px;"/>
 		      </div>
 				</div>
+			</s:form>	
 			</s:iterator>
 		    </div>
 		    
@@ -74,6 +78,7 @@
 		        <s:form action="prev" >
 		            <s:submit value="Previous" style="display: inline-block; margin: 0 auto; width: 100px; height: 30px; border-radius: 15px;"/>
 		    	</s:form>
+		    	<s:property value="currentPage" />
 		    </div>
 	</div>
 </body>

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -214,7 +215,7 @@ public class SearchEngine {
     	    		brands.add(rs.getString("Brand"));
     	    	}
             }
-    	    java.util.Collections.sort(brands);
+    	    Collections.sort(brands);
     	    brands.add(0,"ALL BRANDS");
     	 
     	}
@@ -230,5 +231,49 @@ public class SearchEngine {
 			}
     	}
 		return brands;
+	}
+	
+	public static Product getProductItem(int id) throws SQLException {		
+		Product tempProduct = new Product();
+		if(id == -1)
+			return tempProduct;
+		String queryWithParam = "SELECT * FROM Products WHERE id='" + String.valueOf(id) + "';";
+		Connection cnx = DriverLoader.getMySqlConnection();
+        Statement stmt = null;
+        System.out.println(queryWithParam);
+		try {
+    	    stmt =  cnx.createStatement(
+    	                           ResultSet.TYPE_FORWARD_ONLY,
+    	                           ResultSet.CONCUR_READ_ONLY);
+    	    
+    	    ResultSet rs =  stmt.executeQuery(queryWithParam);
+    	    while (rs.next()) {
+    	    	tempProduct.setId((rs.getInt("id")));
+    	    	tempProduct.setBrandName(rs.getString("Brand"));
+    	    	tempProduct.setSubCategory(rs.getString("SubCategory"));
+    	    	tempProduct.setModelName(rs.getString("ModelName"));
+    	    	tempProduct.setPrice(rs.getFloat("Price"));
+    	    	tempProduct.setPriceCurrency(rs.getString("PriceCurrency"));
+    	    	tempProduct.setDescription(rs.getString("Description"));
+    	    	tempProduct.setSource(rs.getString("SourceUrl"));
+    	    	tempProduct.setResource(rs.getString("ResourceUrl"));
+    	    	tempProduct.setIsDiscounted(rs.getInt("isDiscounted"));
+    	    	tempProduct.setImageUrl(rs.getString("ImageUrl"));
+    	    	tempProduct.setInnerId(rs.getString("InnerId"));
+    	    	tempProduct.setColor(rs.getString("Color"));
+            }    	 
+    	}
+    	catch(Exception ex) {
+    		System.out.println("Handle me please, I am Mysql exception");
+    	}
+    	finally {		
+    		  if (stmt != null) {  stmt.close(); }
+    		  try {
+				cnx.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	}
+		return tempProduct;
 	}
 }

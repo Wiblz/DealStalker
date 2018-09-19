@@ -15,6 +15,8 @@ public class Product {
 	private String Resource;
 	private int isDiscounted;
 	private Gender gender;
+	private String innerId;
+	private String color;
 	
 	
 	public enum Gender{
@@ -124,5 +126,21 @@ public class Product {
 			case "female" : this.gender = Gender.Female;
 			case "unisex" : this.gender = Gender.Unisex;	
 		}
+	}
+
+	public String getInnerId() {
+		return innerId;
+	}
+
+	public void setInnerId(String innerId) {
+		this.innerId = innerId;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
 	}
 }

@@ -74,17 +74,15 @@ public class IndexAction extends ActionSupport implements SessionAware{
     }
     
     public String search() throws Exception {              
-        productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));
-        
+        productList = SearchEngine.Search((SearchEntry) userSession.get("entry"));      
         userSession.put("list", productList);
         brands = (List<String>) userSession.get("brands");
         setCategories(entry);
-
-        
         return SUCCESS;
     }
     
-    public String nextPage() throws Exception {  
+    @SuppressWarnings("unchecked")
+	public String nextPage() throws Exception {  
     	productList = ((ArrayList<Product>) userSession.get("list"));
     	if(productList.size() != 0) {
     		currentPage = (int)userSession.get("page");
@@ -98,8 +96,9 @@ public class IndexAction extends ActionSupport implements SessionAware{
     	return SUCCESS;
     }
     
-    public String prevPage() throws Exception {
-    	productList = (ArrayList<Product>) userSession.get("list");
+    @SuppressWarnings("unchecked")
+	public String prevPage() throws Exception {
+    	productList = ((ArrayList<Product>) userSession.get("list"));
     	currentPage = (int)userSession.get("page");
     	if(currentPage == 0)
     		return SUCCESS;
@@ -134,6 +133,14 @@ public class IndexAction extends ActionSupport implements SessionAware{
 	@Override
 	public void setSession(Map<String, Object> session) {
 		userSession = session;
+	}
+	
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	
+	public void setCurrentPape(int p) {
+		this.currentPage = p;
 	}
 	
 	public void setCategories(SearchEntry entry) {

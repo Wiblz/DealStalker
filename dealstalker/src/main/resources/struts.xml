@@ -44,6 +44,10 @@
         <action name="prev" method="prevPage" class="org.dealstalker.com.IndexAction">
             <result name="success">/WEB-INF/jsp/index.jsp</result>
         </action>
+        
+        <action name="itemInfo" method="execute" class="org.dealstalker.com.ItemInfo">
+            <result name="success">/WEB-INF/jsp/item.jsp</result>
+        </action>
 
     </package>
 
