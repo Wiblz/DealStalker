@@ -202,19 +202,20 @@ public class SearchEngine {
         Statement stmt = null;
         
        
-        String queryWithParam = "SELECT Brand FROM Products LIMIT 10000";
+        String queryWithParam = "SELECT Brand FROM Products LIMIT 10000;";
 		try {
     	    stmt =  cnx.createStatement(
     	                           ResultSet.TYPE_FORWARD_ONLY,
     	                           ResultSet.CONCUR_READ_ONLY);
     	    
     	    ResultSet rs =  stmt.executeQuery(queryWithParam);
-    	    brands.add("ALL BRANDS");
     	    while (rs.next()) {
     	    	if(!brands.contains(rs.getString("Brand"))) {
     	    		brands.add(rs.getString("Brand"));
     	    	}
             }
+    	    java.util.Collections.sort(brands);
+    	    brands.add(0,"ALL BRANDS");
     	 
     	}
     	catch(Exception ex) {
