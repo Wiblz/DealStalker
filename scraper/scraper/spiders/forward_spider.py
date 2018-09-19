@@ -14,7 +14,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
 
     custom_settings = {'COOKIES_ENABLED': 'True'}
 
-    def __init__(self):
+    def __init__(self, name=None, **kwargs):
         super().__init__()
         self.pages_available = None
         self.current_url_base = None

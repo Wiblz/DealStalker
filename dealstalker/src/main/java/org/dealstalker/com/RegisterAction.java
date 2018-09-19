@@ -12,8 +12,10 @@ public class RegisterAction extends ActionSupport {
     	int i = RegisterDAO.save(this);  
         if (i > 0) {  
         	return "success";  
-        }  
-        return "error"; 
+        } else if (i == RegisterDAO.LOGIN_IS_TAKEN) {
+        	return "taken";
+        }
+        return "error";
     }
     
     public void validate() {

@@ -22,7 +22,7 @@ class FarfetchSpider(scrapy.spiders.CrawlSpider):
         self.current_url_base = None
         self.category_resolver = FarfetchResolver()
 
-    def start_requests(self):
+    def start_requests(self, name=None, **kwargs):
         urls = [
                 'https://www.farfetch.com/shopping/men/clothing-2/items.aspx',
                 'https://www.farfetch.com/shopping/men/accessories-all-2/items.aspx',
