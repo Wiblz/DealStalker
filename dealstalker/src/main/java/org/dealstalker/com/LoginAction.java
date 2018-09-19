@@ -5,7 +5,9 @@ import java.util.Map;
 import org.apache.struts2.dispatcher.SessionMap;
 import org.apache.struts2.interceptor.SessionAware;
 
-public class LoginAction implements SessionAware {
+import com.opensymphony.xwork2.ActionSupport;
+
+public class LoginAction extends ActionSupport implements SessionAware {
 
 	private String login;
 	private String password;  
@@ -29,8 +31,8 @@ public class LoginAction implements SessionAware {
 	}  
 	  
 	public String execute() {
-	    if (LoginDAO.validate(login, password)){  
-		    sessionmap.put("login", login);  
+	    if (LoginDAO.validate(login, password)) {
+		    sessionmap.put("login", login);
 	        return "success";  
 	    }  
 	    else {  

@@ -22,6 +22,7 @@
         <action name="register" class="org.dealstalker.com.RegisterAction" method="execute">
  			<result name="success">/WEB-INF/jsp/thankyou.jsp</result>
  			<result name="input">/WEB-INF/jsp/register.jsp</result>
+        	<result name="taken">/WEB-INF/jsp/logintaken.jsp</result>
         </action>
         
         <action name="startSignin">
